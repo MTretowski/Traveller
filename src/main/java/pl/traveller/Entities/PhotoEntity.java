@@ -7,6 +7,7 @@ import javax.persistence.*;
 public class PhotoEntity {
     private long id;
     private String filePath;
+    private boolean accepted;
     private long userId;
     private long placeId;
     private UserEntity userByUserId;
@@ -31,6 +32,16 @@ public class PhotoEntity {
 
     public void setFilePath(String filePath) {
         this.filePath = filePath;
+    }
+
+    @Basic
+    @Column(name = "accepted")
+    public boolean isAccepted() {
+        return accepted;
+    }
+
+    public void setAccepted(boolean accepted) {
+        this.accepted = accepted;
     }
 
     @Basic
@@ -61,6 +72,7 @@ public class PhotoEntity {
         PhotoEntity that = (PhotoEntity) o;
 
         if (id != that.id) return false;
+        if (accepted != that.accepted) return false;
         if (userId != that.userId) return false;
         if (placeId != that.placeId) return false;
         if (filePath != null ? !filePath.equals(that.filePath) : that.filePath != null) return false;
@@ -72,6 +84,7 @@ public class PhotoEntity {
     public int hashCode() {
         int result = (int) (id ^ (id >>> 32));
         result = 31 * result + (filePath != null ? filePath.hashCode() : 0);
+        result = 31 * result + (accepted ? 1 : 0);
         result = 31 * result + (int) (userId ^ (userId >>> 32));
         result = 31 * result + (int) (placeId ^ (placeId >>> 32));
         return result;

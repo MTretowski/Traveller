@@ -1,7 +1,6 @@
 package pl.traveller.Services;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 import pl.traveller.DTOs.ChangePasswordDTO;
@@ -29,7 +28,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public MessageDTO register(UserEntity userEntity, String language) {
         if(userRepository.findByUsername(userEntity.getUsername()) != null){
-            return new MessageDTO(errorMessagesService.getErrorMessage(language, "usernameNotAvailable"));
+            return new MessageDTO(errorMessagesService.getErrorMessage(language, "usernameTaken"));
         }
         else{
             userEntity.setPassword(BCrypt.hashpw(userEntity.getPassword(), BCrypt.gensalt()));

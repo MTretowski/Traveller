@@ -1,3 +1,4 @@
-usernameNotAvailable;Ten login jest niedostępny.
+usernameTaken;Nazwa użytkownika jest już zajęta
 incorrectOldPassword;Stare hasło jest niepoprawne.
 userNotFound;W bazie danych nie znaleziono użytkownika o podanym identyfikatorze.
+placeAlreadyExist;To miejsce już istnieje w bazie danych.

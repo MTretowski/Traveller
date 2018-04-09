@@ -16,7 +16,7 @@ public class ErrorMessagesService {
         messagesPl = getMessages("/messages_pl.csv");
     }
 
-    private HashMap<String, String> getMessages(String filePath){
+    private HashMap<String, String> getMessages(String filePath) {
 
         HashMap<String, String> messages = new HashMap<>();
 
@@ -35,24 +35,28 @@ public class ErrorMessagesService {
                 while ((readedLine = bufferedReader.readLine()) != null) {
                     String[] splittedLine = readedLine.split(";");
                     messages.put(splittedLine[0], splittedLine[1]);
-
                 }
             }
-        }catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
-
         return messages;
-
     }
 
     String getErrorMessage(String language, String key) {
-        if(language.equals("pl")){
-            return messagesPl.get(key);
-        }
-        else{
-            return messagesEn.get(key);
-        }
+        String message;
 
+        if (language.equals("pl")) {
+            message = messagesPl.get(key);
+            if (message == null) {
+                message = "Nieznany błąd";
+            }
+        } else {
+            message = messagesEn.get(key);
+            if (message == null) {
+                message = "Unknown error";
+            }
+        }
+        return message;
     }
 }

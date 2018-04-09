@@ -11,6 +11,8 @@ public class PlaceEntity {
     private String address;
     private String gps;
     private String description;
+    private boolean accepted;
+    private boolean active;
     private long userId;
     private Collection<PhotoEntity> photosById;
     private UserEntity userByUserId;
@@ -68,6 +70,26 @@ public class PlaceEntity {
     }
 
     @Basic
+    @Column(name = "accepted")
+    public boolean isAccepted() {
+        return accepted;
+    }
+
+    public void setAccepted(boolean accepted) {
+        this.accepted = accepted;
+    }
+
+    @Basic
+    @Column(name = "active")
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+
+    @Basic
     @Column(name = "user_id")
     public long getUserId() {
         return userId;
@@ -85,6 +107,8 @@ public class PlaceEntity {
         PlaceEntity that = (PlaceEntity) o;
 
         if (id != that.id) return false;
+        if (accepted != that.accepted) return false;
+        if (active != that.active) return false;
         if (userId != that.userId) return false;
         if (name != null ? !name.equals(that.name) : that.name != null) return false;
         if (address != null ? !address.equals(that.address) : that.address != null) return false;
@@ -101,6 +125,8 @@ public class PlaceEntity {
         result = 31 * result + (address != null ? address.hashCode() : 0);
         result = 31 * result + (gps != null ? gps.hashCode() : 0);
         result = 31 * result + (description != null ? description.hashCode() : 0);
+        result = 31 * result + (accepted ? 1 : 0);
+        result = 31 * result + (active ? 1 : 0);
         result = 31 * result + (int) (userId ^ (userId >>> 32));
         return result;
     }

@@ -10,6 +10,7 @@ public class VisitEntity {
     private long id;
     private Timestamp date;
     private boolean visited;
+    private boolean visible;
     private long userId;
     private long placeId;
     private Collection<CommentEntity> commentsById;
@@ -48,6 +49,16 @@ public class VisitEntity {
     }
 
     @Basic
+    @Column(name = "visible")
+    public boolean isVisible() {
+        return visible;
+    }
+
+    public void setVisible(boolean visible) {
+        this.visible = visible;
+    }
+
+    @Basic
     @Column(name = "user_id")
     public long getUserId() {
         return userId;
@@ -76,6 +87,7 @@ public class VisitEntity {
 
         if (id != that.id) return false;
         if (visited != that.visited) return false;
+        if (visible != that.visible) return false;
         if (userId != that.userId) return false;
         if (placeId != that.placeId) return false;
         if (date != null ? !date.equals(that.date) : that.date != null) return false;
@@ -88,6 +100,7 @@ public class VisitEntity {
         int result = (int) (id ^ (id >>> 32));
         result = 31 * result + (date != null ? date.hashCode() : 0);
         result = 31 * result + (visited ? 1 : 0);
+        result = 31 * result + (visible ? 1 : 0);
         result = 31 * result + (int) (userId ^ (userId >>> 32));
         result = 31 * result + (int) (placeId ^ (placeId >>> 32));
         return result;

@@ -1,3 +1,4 @@
-usernameNotAvailable;This username is not available.
+usernameTaken;This username is already taken.
 incorrectOldPassword;Old password is incorrect.
 userNotFound;The user with the given ID was not found in database.
+placeAlreadyExist;This place already exist in database.
