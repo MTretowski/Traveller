@@ -2,3 +2,4 @@ usernameTaken;This username is already taken.
 incorrectOldPassword;Old password is incorrect.
 userNotFound;The user with the given ID was not found in database.
 placeAlreadyExist;This place already exist in database.
+placeNotFound;The place with the given ID was not found in database.

@@ -11,6 +11,8 @@ public interface PlaceRepository extends CrudRepository<PlaceEntity, Integer> {
 
     List<PlaceEntity> findAll();
 
+    PlaceEntity findById(long id);
+
     PlaceEntity findByNameAndAddress(String name, String address);
 
     PlaceEntity findByNameAndGps(String name, String gps);
