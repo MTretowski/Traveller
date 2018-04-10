@@ -4,7 +4,21 @@
     "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
 <hibernate-configuration>
   <session-factory>
+
+    <!--
+    BAZA DANYCH POSTAWIONA NA HOSTINGU HEKKO
+    -->
+
+    <!--
     <property name="connection.url">jdbc:mysql://s68.hekko.pl:3306/logsta1_TIM</property>
+    -->
+
+    <!--
+    LOKALNA BAZA DANYCH NA MYSQL
+    -->
+
+    <property name="connection.url">jdbc:mysql://localhost:3306/logsta1_TIM</property>
+
     <property name="connection.driver_class">com.mysql.jdbc.Driver</property>
     <mapping class="pl.traveller.Entities.CommentEntity"/>
     <mapping class="pl.traveller.Entities.PhotoEntity"/>

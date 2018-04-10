@@ -7,10 +7,8 @@ import lombok.Setter;
 @Getter
 @Setter
 @AllArgsConstructor
-public class UserDTO {
+public class ResetPasswordDTO {
 
-    private long id;
-    private String username;
-    private boolean active;
-    private long userRoleId;
+    private long userId;
+    private String newPassword;
 }

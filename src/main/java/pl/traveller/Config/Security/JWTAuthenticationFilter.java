@@ -1,8 +1,11 @@
 package pl.traveller.Config.Security;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Service;
 import org.springframework.web.filter.GenericFilterBean;
 import org.springframework.security.core.Authentication;
+import pl.traveller.Services.UserServiceImpl;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -13,9 +16,15 @@ import java.io.IOException;
 
 public class JWTAuthenticationFilter extends GenericFilterBean {
 
+    private UserServiceImpl userService;
+
+    public JWTAuthenticationFilter(UserServiceImpl userService) {
+        this.userService = userService;
+    }
+
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain) throws IOException, ServletException {
-        Authentication authentication = TokenAuthenticationService.getAuthentication((HttpServletRequest) request);
+        Authentication authentication = TokenAuthenticationService.getAuthentication((HttpServletRequest) request, userService);
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
         filterChain.doFilter(request, response);

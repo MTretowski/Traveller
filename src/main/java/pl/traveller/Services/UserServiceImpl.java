@@ -5,8 +5,14 @@ import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 import pl.traveller.DTOs.ChangePasswordDTO;
 import pl.traveller.DTOs.MessageDTO;
+import pl.traveller.DTOs.ResetPasswordDTO;
+import pl.traveller.DTOs.UserDTO;
 import pl.traveller.Entities.UserEntity;
 import pl.traveller.Repositories.UserRepository;
+import pl.traveller.Repositories.UserRoleRepository;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -18,6 +24,27 @@ public class UserServiceImpl implements UserService {
     public UserServiceImpl(UserRepository userRepository, ErrorMessagesService errorMessagesService) {
         this.userRepository = userRepository;
         this.errorMessagesService = errorMessagesService;
+    }
+
+    @Override
+    public boolean isAdmin(String username) {
+        UserEntity userEntity = userRepository.findByUsername(username);
+        return userEntity.getUserRoleByUserRoleId().getLabel().equals("Administrator");
+    }
+
+    @Override
+    public List<UserDTO> findAll() {
+        List<UserEntity> userEntities = userRepository.findAll();
+        List<UserDTO> userDTOS = new ArrayList<>();
+        for(UserEntity userEntity: userEntities){
+            userDTOS.add(new UserDTO(
+                    userEntity.getId(),
+                    userEntity.getUsername(),
+                    userEntity.isActive(),
+                    userEntity.getUserRoleId()
+            ));
+        }
+        return userDTOS;
     }
 
     @Override
@@ -50,6 +77,40 @@ public class UserServiceImpl implements UserService {
         else{
             userEntity.setPassword(BCrypt.hashpw(changePasswordDTO.getNewPassword(), BCrypt.gensalt()));
             return null;
+        }
+    }
+
+    @Override
+    public MessageDTO resetPassword(ResetPasswordDTO resetPasswordDTO, String language) {
+        UserEntity userEntity = userRepository.findById(resetPasswordDTO.getUserId());
+
+        if(userEntity == null){
+            return new MessageDTO(errorMessagesService.getErrorMessage(language, "userNotFound"));
+        }
+        else{
+            userEntity.setPassword(BCrypt.hashpw(resetPasswordDTO.getNewPassword(), BCrypt.gensalt()));
+            return null;
+        }
+    }
+
+    @Override
+    public MessageDTO editUser(UserDTO userDTO, String language){
+        if (userRepository.findById(userDTO.getId()) == null) {
+            return new MessageDTO(errorMessagesService.getErrorMessage(language, "userNotFound"));
+        } else {
+            UserEntity userTemp = userRepository.findByUsername(userDTO.getUsername());
+            if (userTemp == null || userTemp.getId() == userDTO.getId()) {
+                UserEntity user = new UserEntity();
+                user.setId(userDTO.getId());
+                user.setUsername(userDTO.getUsername());
+                user.setPassword(userRepository.findById(userDTO.getId()).getPassword());
+                user.setActive(userDTO.isActive());
+                user.setUserRoleId(userDTO.getUserRoleId());
+                userRepository.save(user);
+                return null;
+            } else {
+                return new MessageDTO(errorMessagesService.getErrorMessage(language, "usernameTaken"));
+            }
         }
     }
 

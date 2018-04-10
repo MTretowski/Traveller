@@ -4,11 +4,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
 import pl.traveller.DTOs.ChangePasswordDTO;
 import pl.traveller.DTOs.MessageDTO;
+import pl.traveller.DTOs.ResetPasswordDTO;
+import pl.traveller.DTOs.UserDTO;
 import pl.traveller.Entities.UserEntity;
 import pl.traveller.Services.UserServiceImpl;
 
@@ -33,7 +33,7 @@ public class UserController {
         }
     }
 
-    @PostMapping (value = "/user/changePassword/{language}")
+    @PutMapping(value = "/user/changePassword/{language}")
     public ResponseEntity changePassword(@RequestBody ChangePasswordDTO changePasswordDTO, @PathVariable String language){
         MessageDTO messageDTO = userService.changePassword(changePasswordDTO, language);
         if(messageDTO == null){
@@ -43,4 +43,36 @@ public class UserController {
             return new ResponseEntity<>(messageDTO, HttpStatus.CONFLICT);
         }
     }
+
+
+
+
+
+    @GetMapping (value = "/admin/user/all")
+    public ResponseEntity findAll(){
+        return new ResponseEntity<>(userService.findAll(), HttpStatus.OK);
+    }
+
+    @PutMapping (value = "/admin/user/resetPassword/{language}")
+    public ResponseEntity resetPassword(@RequestBody ResetPasswordDTO resetPasswordDTO, @PathVariable String language){
+        MessageDTO messageDTO = userService.resetPassword(resetPasswordDTO, language);
+        if(messageDTO == null){
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+        else{
+            return new ResponseEntity<>(messageDTO, HttpStatus.CONFLICT);
+        }
+    }
+
+    @PutMapping (value = "/admin/user/edit/{language}")
+    public ResponseEntity editUser(@RequestBody UserDTO userDTO, @PathVariable String language){
+        MessageDTO messageDTO = userService.editUser(userDTO, language);
+        if(messageDTO == null){
+            return new ResponseEntity<>(userService.findAll(), HttpStatus.OK);
+        }
+        else{
+            return new ResponseEntity<>(messageDTO, HttpStatus.CONFLICT);
+        }
+    }
+
 }
