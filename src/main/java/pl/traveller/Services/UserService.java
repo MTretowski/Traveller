@@ -18,6 +18,8 @@ public interface UserService {
 
     MessageDTO register(UserEntity userEntity, String language);
 
+    MessageDTO deactivateAccount(long id, String language);
+
     MessageDTO changePassword(ChangePasswordDTO changePasswordDTO, String language);
 
     MessageDTO resetPassword(ResetPasswordDTO resetPasswordDTO, String language);

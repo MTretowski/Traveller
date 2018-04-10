@@ -65,6 +65,20 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public MessageDTO deactivateAccount(long id, String language) {
+        UserEntity userEntity = userRepository.findById(id);
+
+        if(userEntity == null){
+            return new MessageDTO(errorMessagesService.getErrorMessage(language, "userNotFound"));
+        }
+        else{
+            userEntity.setActive(false);
+            userRepository.save(userEntity);
+            return null;
+        }
+    }
+
+    @Override
     public MessageDTO changePassword(ChangePasswordDTO changePasswordDTO, String language) {
         UserEntity userEntity = userRepository.findById(changePasswordDTO.getUserId());
 
