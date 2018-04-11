@@ -10,7 +10,7 @@
     -->
 
 
-    <property name="connection.url">jdbc:mysql://localhost:3306/logsta1_TIM</property>
+    <property name="connection.url">jdbc:mysql://s68.hekko.pl:3306/logsta1_TIM</property>
 
 
     <!--
@@ -21,13 +21,14 @@
     <property name="connection.url">jdbc:mysql://s68.hekko.pl:3306/logsta1_TIM</property>
     -->
     <property name="connection.driver_class">com.mysql.jdbc.Driver</property>
-    <mapping class="pl.traveller.Entities.CommentEntity"/>
+      <mapping class="pl.traveller.Entities.CommentEntity"/>
     <mapping class="pl.traveller.Entities.PhotoEntity"/>
     <mapping class="pl.traveller.Entities.PlaceEntity"/>
     <mapping class="pl.traveller.Entities.UserEntity"/>
     <mapping class="pl.traveller.Entities.VisitEntity"/>
     <mapping class="pl.traveller.Entities.UserRoleEntity"/>
-    <!-- <property name="connection.username"/> -->
+      <mapping class="pl.traveller.Entities.PhotoFileEntity"/>
+      <!-- <property name="connection.username"/> -->
     <!-- <property name="connection.password"/> -->
 
     <!-- DB schema will be updated if needed -->
