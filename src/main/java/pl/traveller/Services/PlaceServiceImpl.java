@@ -3,9 +3,12 @@ package pl.traveller.Services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import pl.traveller.DTOs.CommentDTO;
 import pl.traveller.DTOs.MessageDTO;
 import pl.traveller.DTOs.PlaceDTO;
+import pl.traveller.Entities.CommentEntity;
 import pl.traveller.Entities.PlaceEntity;
+import pl.traveller.Entities.VisitEntity;
 import pl.traveller.Repositories.PlaceRepository;
 import pl.traveller.Repositories.UserRepository;
 
@@ -19,12 +22,17 @@ public class PlaceServiceImpl implements PlaceService {
     private PlaceRepository placeRepository;
     private ErrorMessagesService errorMessagesService;
     private UserRepository userRepository;
+    private VisitServiceImpl visitService;
+    private CommentServiceImpl commentService;
 
     @Autowired
-    public PlaceServiceImpl(PlaceRepository placeRepository, ErrorMessagesService errorMessagesService, UserRepository userRepository) {
+    public PlaceServiceImpl(PlaceRepository placeRepository, ErrorMessagesService errorMessagesService, UserRepository userRepository,
+                            VisitServiceImpl visitService, CommentServiceImpl commentService) {
         this.placeRepository = placeRepository;
         this.errorMessagesService = errorMessagesService;
         this.userRepository = userRepository;
+        this.visitService = visitService;
+        this.commentService = commentService;
     }
 
     private List<PlaceDTO> findAll(boolean accepted){
@@ -125,5 +133,23 @@ public class PlaceServiceImpl implements PlaceService {
     @Override
     public MessageDTO getErrorMessage(String language, String key){
         return new MessageDTO(errorMessagesService.getErrorMessage(language, key));
+    }
+
+    @Override
+    public List<CommentDTO> findCommentsByPlaceId(long placeId) {
+        List<VisitEntity> visitEntities = visitService.findAllByPlaceId(placeId);
+        List<CommentDTO> commentDTOS = new ArrayList<>();
+        CommentEntity commentEntity;
+
+        for(VisitEntity visitEntity: visitEntities){
+            commentEntity = commentService.findByVisitId(visitEntity.getId());
+            commentDTOS.add(new CommentDTO(
+                    commentEntity.getText(),
+                    commentEntity.isRecommended(),
+                    visitEntity.getDate()
+            ));
+        }
+
+        return commentDTOS;
     }
 }

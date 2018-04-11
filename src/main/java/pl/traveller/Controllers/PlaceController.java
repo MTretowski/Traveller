@@ -20,7 +20,6 @@ public class PlaceController {
         this.placeService = placeService;
     }
 
-
     @GetMapping (value = "/place/all")
     public ResponseEntity findAll(){
         return new ResponseEntity<>(placeService.findAllAccepted(), HttpStatus.OK);
@@ -37,7 +36,10 @@ public class PlaceController {
         }
     }
 
-
+    @GetMapping (value = "/place/comments/{placeId}")
+    public ResponseEntity findCommentsByPlaceId(@PathVariable long placeId){
+        return new ResponseEntity<>(placeService.findCommentsByPlaceId(placeId), HttpStatus.OK);
+    }
 
     @PostMapping(value = "/place/new/{language}")
     public ResponseEntity newPlace(@RequestBody PlaceEntity placeEntity, @PathVariable String language){
@@ -49,8 +51,6 @@ public class PlaceController {
             return new ResponseEntity<>(messageDTO, HttpStatus.CONFLICT);
         }
     }
-
-
 
     @GetMapping (value = "admin/place/allNotAccepted")
     public ResponseEntity findAllNotAccepted(){

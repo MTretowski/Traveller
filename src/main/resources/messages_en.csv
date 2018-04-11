@@ -4,3 +4,4 @@ userNotFound;The user with the given ID was not found in database.
 placeAlreadyExist;This place already exist in database.
 placeNotFound;The place with the given ID was not found in database.
 visitAlreadyExist;This place was already selected as 'To visit'.
+visitAlreadyCommented;You have already posted a comment to this visit.

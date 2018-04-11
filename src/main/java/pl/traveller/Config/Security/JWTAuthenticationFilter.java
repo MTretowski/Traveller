@@ -1,8 +1,6 @@
 package pl.traveller.Config.Security;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Service;
 import org.springframework.web.filter.GenericFilterBean;
 import org.springframework.security.core.Authentication;
 import pl.traveller.Services.UserServiceImpl;
@@ -18,7 +16,7 @@ public class JWTAuthenticationFilter extends GenericFilterBean {
 
     private UserServiceImpl userService;
 
-    public JWTAuthenticationFilter(UserServiceImpl userService) {
+    JWTAuthenticationFilter(UserServiceImpl userService) {
         this.userService = userService;
     }
 

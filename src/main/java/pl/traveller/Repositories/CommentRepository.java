@@ -6,4 +6,6 @@ import pl.traveller.Entities.CommentEntity;
 
 @Repository
 public interface CommentRepository extends CrudRepository<CommentEntity, Integer> {
+
+    CommentEntity findByVisitId(long visitId);
 }

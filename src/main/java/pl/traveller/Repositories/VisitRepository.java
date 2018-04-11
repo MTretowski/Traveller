@@ -18,4 +18,6 @@ public interface VisitRepository extends CrudRepository<VisitEntity, Integer> {
     VisitEntity findByUserIdAndPlaceIdAndVisited(long userId, long placeId, boolean visited);
 
     void deleteById(long id);
+
+    List<VisitEntity> findAllByPlaceId(long placeId);
 }

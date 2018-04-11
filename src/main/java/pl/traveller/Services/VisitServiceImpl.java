@@ -125,6 +125,10 @@ public class VisitServiceImpl implements VisitService {
         }
     }
 
+    @Override
+    public List<VisitEntity> findAllByPlaceId(long placeId) {
+        return null;
+    }
 
 
 }

@@ -22,4 +22,6 @@ public interface VisitService {
 
     boolean selectPlaceAsVisited(long visitId, long userId);
 
+    List<VisitEntity> findAllByPlaceId(long placeId);
+
 }

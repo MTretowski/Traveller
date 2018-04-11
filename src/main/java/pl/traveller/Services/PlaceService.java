@@ -1,5 +1,6 @@
 package pl.traveller.Services;
 
+import pl.traveller.DTOs.CommentDTO;
 import pl.traveller.DTOs.MessageDTO;
 import pl.traveller.DTOs.PlaceDTO;
 import pl.traveller.Entities.PlaceEntity;
@@ -21,4 +22,6 @@ public interface PlaceService {
     PlaceDTO findById(long id);
 
     MessageDTO getErrorMessage(String language, String key);
+
+    List<CommentDTO> findCommentsByPlaceId(long placeId);
 }

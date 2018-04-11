@@ -4,3 +4,4 @@ userNotFound;W bazie danych nie znaleziono użytkownika o podanym identyfikatorz
 placeAlreadyExist;To miejsce już istnieje w bazie danych.
 placeNotFound;W bazie danych nie znaleziono miejsca o podanym identyfikatorze.
 visitAlreadyExist;To miejsce zostało już oznaczone jako 'Do odwiedzenia'.
+visitAlreadyCommented;Już opublikowałeś komentarz do tej wizyty.
