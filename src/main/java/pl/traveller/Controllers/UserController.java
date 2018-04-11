@@ -64,6 +64,11 @@ public class UserController {
         return new ResponseEntity<>(userService.findAll(), HttpStatus.OK);
     }
 
+    @GetMapping (value = "/admin/role/all")
+    public ResponseEntity findAllRoles() {
+        return new ResponseEntity<>(userService.findAllRoles(), HttpStatus.OK);
+    }
+
     @PutMapping (value = "/admin/user/resetPassword/{language}")
     public ResponseEntity resetPassword(@RequestBody ResetPasswordDTO resetPasswordDTO, @PathVariable String language){
         MessageDTO messageDTO = userService.resetPassword(resetPasswordDTO, language);

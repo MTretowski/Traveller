@@ -1,9 +1,6 @@
 package pl.traveller.Services;
 
-import pl.traveller.DTOs.ChangePasswordDTO;
-import pl.traveller.DTOs.MessageDTO;
-import pl.traveller.DTOs.ResetPasswordDTO;
-import pl.traveller.DTOs.UserDTO;
+import pl.traveller.DTOs.*;
 import pl.traveller.Entities.UserEntity;
 
 import java.util.List;
@@ -25,4 +22,6 @@ public interface UserService {
     MessageDTO resetPassword(ResetPasswordDTO resetPasswordDTO, String language);
 
     MessageDTO editUser(UserDTO userDTO, String language);
+
+    List<UserRoleDTO> findAllRoles();
 }

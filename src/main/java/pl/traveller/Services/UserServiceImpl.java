@@ -3,12 +3,11 @@ package pl.traveller.Services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
-import pl.traveller.DTOs.ChangePasswordDTO;
-import pl.traveller.DTOs.MessageDTO;
-import pl.traveller.DTOs.ResetPasswordDTO;
-import pl.traveller.DTOs.UserDTO;
+import pl.traveller.DTOs.*;
 import pl.traveller.Entities.UserEntity;
+import pl.traveller.Entities.UserRoleEntity;
 import pl.traveller.Repositories.UserRepository;
+import pl.traveller.Repositories.UserRoleRepository;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,11 +16,13 @@ import java.util.List;
 public class UserServiceImpl implements UserService {
 
     private UserRepository userRepository;
+    private UserRoleRepository userRoleRepository;
     private ErrorMessagesService errorMessagesService;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, ErrorMessagesService errorMessagesService) {
+    public UserServiceImpl(UserRepository userRepository, UserRoleRepository userRoleRepository, ErrorMessagesService errorMessagesService) {
         this.userRepository = userRepository;
+        this.userRoleRepository = userRoleRepository;
         this.errorMessagesService = errorMessagesService;
     }
 
@@ -127,4 +128,17 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    @Override
+    public List<UserRoleDTO> findAllRoles() {
+        List<UserRoleEntity> userRoleEntities = userRoleRepository.findAll();
+        List<UserRoleDTO> userRoleDTOS = new ArrayList<>(userRoleEntities.size());
+
+        for(UserRoleEntity userRoleEntity: userRoleEntities){
+            userRoleDTOS.add(new UserRoleDTO(
+                    userRoleEntity.getId(),
+                    userRoleEntity.getLabel()
+            ));
+        }
+        return userRoleDTOS;
+    }
 }
