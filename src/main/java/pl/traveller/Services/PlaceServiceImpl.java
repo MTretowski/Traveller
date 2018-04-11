@@ -27,9 +27,8 @@ public class PlaceServiceImpl implements PlaceService {
         this.userRepository = userRepository;
     }
 
-    @Override
-    public List<PlaceDTO> findAll() {
-        List<PlaceEntity> placeEntities = placeRepository.findAll();
+    private List<PlaceDTO> findAll(boolean accepted){
+        List<PlaceEntity> placeEntities = placeRepository.findAllByAccepted(accepted);
         List<PlaceDTO> placeDTOS = new ArrayList<>(placeEntities.size());
 
         for (PlaceEntity placeEntity : placeEntities) {
@@ -45,6 +44,16 @@ public class PlaceServiceImpl implements PlaceService {
             ));
         }
         return placeDTOS;
+    }
+
+    @Override
+    public List<PlaceDTO> findAllAccepted() {
+        return findAll(true);
+    }
+
+    @Override
+    public List<PlaceDTO> findAllNotAccepted() {
+        return findAll(false);
     }
 
     @Override
@@ -92,5 +101,29 @@ public class PlaceServiceImpl implements PlaceService {
         else{
             return new MessageDTO(errorMessagesService.getErrorMessage(language, "placeNotFound"));
         }
+    }
+
+    @Override
+    public PlaceDTO findById(long id) {
+        PlaceEntity placeEntity = placeRepository.findById(id);
+        if(placeEntity != null) {
+            return new PlaceDTO(
+                    placeEntity.getId(),
+                    placeEntity.getName(),
+                    placeEntity.getAddress(),
+                    placeEntity.getGps(),
+                    placeEntity.getDescription(),
+                    placeEntity.isAccepted(),
+                    placeEntity.isActive(),
+                    placeEntity.getUserId());
+        }
+        else{
+            return null;
+        }
+    }
+
+    @Override
+    public MessageDTO getErrorMessage(String language, String key){
+        return new MessageDTO(errorMessagesService.getErrorMessage(language, key));
     }
 }

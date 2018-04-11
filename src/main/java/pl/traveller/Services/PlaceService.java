@@ -8,11 +8,17 @@ import java.util.List;
 
 public interface PlaceService {
 
-    List<PlaceDTO> findAll();
+    List<PlaceDTO> findAllAccepted();
+
+    List<PlaceDTO> findAllNotAccepted();
 
     MessageDTO newPlace(PlaceEntity placeEntity, String language);
 
     MessageDTO edit(PlaceEntity placeEntity, String language);
 
     MessageDTO accept(long id, String language);
+
+    PlaceDTO findById(long id);
+
+    MessageDTO getErrorMessage(String language, String key);
 }

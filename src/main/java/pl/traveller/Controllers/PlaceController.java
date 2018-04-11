@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import pl.traveller.DTOs.MessageDTO;
+import pl.traveller.DTOs.PlaceDTO;
 import pl.traveller.Entities.PlaceEntity;
 import pl.traveller.Services.PlaceServiceImpl;
 
@@ -22,8 +23,21 @@ public class PlaceController {
 
     @GetMapping (value = "/place/all")
     public ResponseEntity findAll(){
-        return new ResponseEntity<>(placeService.findAll(), HttpStatus.OK);
+        return new ResponseEntity<>(placeService.findAllAccepted(), HttpStatus.OK);
     }
+
+    @GetMapping (value = "/place/{placeId}/{language}")
+    public ResponseEntity findPlace(@PathVariable long placeId, @PathVariable String language){
+        PlaceDTO placeDTO = placeService.findById(placeId);
+        if(placeDTO != null) {
+            return new ResponseEntity<>(placeDTO, HttpStatus.OK);
+        }
+        else{
+            return new ResponseEntity<>(placeService.getErrorMessage(language, "placeNotFound"), HttpStatus.CONFLICT);
+        }
+    }
+
+
 
     @PostMapping(value = "/place/new/{language}")
     public ResponseEntity newPlace(@RequestBody PlaceEntity placeEntity, @PathVariable String language){
@@ -37,6 +51,11 @@ public class PlaceController {
     }
 
 
+
+    @GetMapping (value = "admin/place/allNotAccepted")
+    public ResponseEntity findAllNotAccepted(){
+        return new ResponseEntity<>(placeService.findAllNotAccepted(), HttpStatus.OK);
+    }
 
     @PutMapping(value = "/admin/place/edit/{language}")
     public ResponseEntity editPlace(@RequestBody PlaceEntity placeEntity, @PathVariable String language){

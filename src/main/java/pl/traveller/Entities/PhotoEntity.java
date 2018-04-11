@@ -1,12 +1,13 @@
 package pl.traveller.Entities;
 
 import javax.persistence.*;
+import java.util.Arrays;
 
 @Entity
-@Table(name = "photo", schema = "logsta1_TIM")
+@Table(name = "photo", schema = "logsta1_tim")
 public class PhotoEntity {
     private long id;
-    private String filePath;
+    private byte[] file;
     private boolean accepted;
     private long userId;
     private long placeId;
@@ -25,13 +26,13 @@ public class PhotoEntity {
     }
 
     @Basic
-    @Column(name = "file_path")
-    public String getFilePath() {
-        return filePath;
+    @Column(name = "file")
+    public byte[] getFile() {
+        return file;
     }
 
-    public void setFilePath(String filePath) {
-        this.filePath = filePath;
+    public void setFile(byte[] file) {
+        this.file = file;
     }
 
     @Basic
@@ -75,7 +76,7 @@ public class PhotoEntity {
         if (accepted != that.accepted) return false;
         if (userId != that.userId) return false;
         if (placeId != that.placeId) return false;
-        if (filePath != null ? !filePath.equals(that.filePath) : that.filePath != null) return false;
+        if (file != null ? !file.equals(that.file) : that.file != null) return false;
 
         return true;
     }
@@ -83,7 +84,7 @@ public class PhotoEntity {
     @Override
     public int hashCode() {
         int result = (int) (id ^ (id >>> 32));
-        result = 31 * result + (filePath != null ? filePath.hashCode() : 0);
+        result = 31 * result + (file != null ? file.hashCode() : 0);
         result = 31 * result + (accepted ? 1 : 0);
         result = 31 * result + (int) (userId ^ (userId >>> 32));
         result = 31 * result + (int) (placeId ^ (placeId >>> 32));

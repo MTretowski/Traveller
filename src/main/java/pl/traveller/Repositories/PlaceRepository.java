@@ -9,7 +9,7 @@ import java.util.List;
 @Repository
 public interface PlaceRepository extends CrudRepository<PlaceEntity, Integer> {
 
-    List<PlaceEntity> findAll();
+    List<PlaceEntity> findAllByAccepted(boolean accepted);
 
     PlaceEntity findById(long id);
 

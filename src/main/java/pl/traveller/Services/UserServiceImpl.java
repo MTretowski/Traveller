@@ -9,7 +9,6 @@ import pl.traveller.DTOs.ResetPasswordDTO;
 import pl.traveller.DTOs.UserDTO;
 import pl.traveller.Entities.UserEntity;
 import pl.traveller.Repositories.UserRepository;
-import pl.traveller.Repositories.UserRoleRepository;
 
 import java.util.ArrayList;
 import java.util.List;
