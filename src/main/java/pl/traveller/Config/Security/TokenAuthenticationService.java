@@ -15,8 +15,7 @@ import static java.util.Collections.emptyList;
 
 public class TokenAuthenticationService {
 
-    //private static final long EXPIRATION = 864_000_000;
-    private static final long EXPIRATION = 1;
+    private static final long EXPIRATION = 864_000_000;
     private static final String SECRET = "TIM_2018_I7B3S4_Tchon_Tretowski_Zien";
     private static final String HEADER_STRING = "Token";
 
@@ -42,22 +41,24 @@ public class TokenAuthenticationService {
         String token = request.getHeader(HEADER_STRING);
         if (token != null) {
             String user;
-            try{
+            try {
                 user = Jwts.parser()
                         .setSigningKey(SECRET)
                         .parseClaimsJws(token)
                         .getBody()
                         .getSubject();
-            }catch (ExpiredJwtException e){
+            } catch (ExpiredJwtException e) {
                 return null;
             }
-
-            if(request.getRequestURL().toString().contains("/admin/") && !userService.isAdmin(user)){
+            if (request.getRequestURL().toString().contains("/admin/") && !userService.isAdmin(user)) {
                 return null;
-            }
-
-            else {
-                return user != null ? new UsernamePasswordAuthenticationToken(user, null, emptyList()) : null;
+            } else {
+                if (userService.isActive(user)) {
+                    return user != null ? new UsernamePasswordAuthenticationToken(user, null, emptyList()) : null;
+                }
+                else{
+                    return null;
+                }
             }
         }
         return null;

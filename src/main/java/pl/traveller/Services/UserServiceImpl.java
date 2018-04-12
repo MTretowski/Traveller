@@ -34,7 +34,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean isAdmin(String username) {
         UserEntity userEntity = userRepository.findByUsername(username);
-        return userEntity.getUserRoleByUserRoleId().getLabel().equals("Administrator");
+        return userEntity != null && userRoleRepository.findById(userEntity.getUserRoleId()).getLabel().equals("Administrator");
     }
 
     @Override
@@ -102,6 +102,7 @@ public class UserServiceImpl implements UserService {
                 return new MessageDTO(errorMessagesService.getErrorMessage(language, "incorrectOldPassword"));
             } else {
                 userEntity.setPassword(BCrypt.hashpw(changePasswordDTO.getNewPassword(), BCrypt.gensalt()));
+                userRepository.save(userEntity);
                 return null;
             }
         } else {
@@ -117,6 +118,7 @@ public class UserServiceImpl implements UserService {
             return new MessageDTO(errorMessagesService.getErrorMessage(language, "userNotFound"));
         } else {
             userEntity.setPassword(BCrypt.hashpw(resetPasswordDTO.getNewPassword(), BCrypt.gensalt()));
+            userRepository.save(userEntity);
             return null;
         }
     }
@@ -154,6 +156,12 @@ public class UserServiceImpl implements UserService {
             ));
         }
         return userRoleDTOS;
+    }
+
+    @Override
+    public boolean isActive(String username) {
+        UserEntity userEntity = userRepository.findByUsername(username);
+        return userEntity != null && userEntity.isActive();
     }
 
 }

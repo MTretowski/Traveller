@@ -28,4 +28,6 @@ public interface UserService {
     MessageDTO editUser(UserDTO userDTO, String language);
 
     List<UserRoleDTO> findAllRoles();
+
+    boolean isActive(String username);
 }
