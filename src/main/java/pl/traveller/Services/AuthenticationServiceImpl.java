@@ -9,7 +9,7 @@ import pl.traveller.Entities.UserEntity;
 import pl.traveller.Repositories.UserRepository;
 
 @Service
-public class AuthorizationServiceImpl implements AuthorizationService {
+public class AuthenticationServiceImpl implements AuthenticationService {
 
     private UserRepository userRepository;
     private String secret;
@@ -17,7 +17,7 @@ public class AuthorizationServiceImpl implements AuthorizationService {
 
 
     @Autowired
-    public AuthorizationServiceImpl(UserRepository userRepository){
+    public AuthenticationServiceImpl(UserRepository userRepository){
         this.userRepository = userRepository;
         this.secret = TokenAuthenticationService.getSECRET();
         this.headerString = TokenAuthenticationService.getHeaderString();

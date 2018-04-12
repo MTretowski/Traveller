@@ -1,15 +1,17 @@
 package pl.traveller.Controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.*;
 import pl.traveller.DTOs.MessageDTO;
+import pl.traveller.DTOs.NewPhotoDTO;
 import pl.traveller.DTOs.PhotoFileDTO;
 import pl.traveller.Services.PhotoServiceImpl;
+
+import javax.security.sasl.AuthenticationException;
 
 @Controller
 public class PhotoController {
@@ -37,6 +39,16 @@ public class PhotoController {
         }
     }
 
+    @PostMapping (value = "/photo/add")
+    public ResponseEntity addPhoto(@RequestBody NewPhotoDTO newPhotoDTO, @RequestHeader HttpHeaders httpHeaders){
+        try{
+            photoService.addPhoto(newPhotoDTO, httpHeaders);
+            return new ResponseEntity<>(HttpStatus.OK);
+        }catch(AuthenticationException e){
+            return new ResponseEntity(HttpStatus.FORBIDDEN);
+        }
+    }
+
     @GetMapping (value = "/admin/photo/allNotAccepted")
     public ResponseEntity findAllNotAccepted(){
         return new ResponseEntity<>(photoService.findAllNotAccepted(), HttpStatus.OK);
@@ -52,4 +64,12 @@ public class PhotoController {
             return new ResponseEntity<>(messageDTO, HttpStatus.CONFLICT);
         }
     }
+
+    @DeleteMapping (value = "/admin/photo/delete/{photoId}")
+    public ResponseEntity deletePhoto(@PathVariable long photoId){
+        photoService.deletePhoto(photoId);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+
 }
