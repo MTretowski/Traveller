@@ -33,6 +33,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public boolean isAdmin(UserEntity userEntity) {
+        return userRoleRepository.findById(userEntity.getUserRoleId()).getLabel().equals("Administrator");
+    }
+
+    @Override
     public List<UserDTO> findAll() {
         List<UserEntity> userEntities = userRepository.findAll();
         List<UserDTO> userDTOS = new ArrayList<>();
@@ -59,6 +64,7 @@ public class UserServiceImpl implements UserService {
         }
         else{
             userEntity.setPassword(BCrypt.hashpw(userEntity.getPassword(), BCrypt.gensalt()));
+            userEntity.setActive(true);
             userRepository.save(userEntity);
             return null;
         }

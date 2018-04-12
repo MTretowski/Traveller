@@ -9,6 +9,8 @@ public interface UserService {
 
     boolean isAdmin(String username);
 
+    boolean isAdmin(UserEntity userEntity);
+
     List<UserDTO> findAll();
 
     String getUserIdByUsername(String username);
