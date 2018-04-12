@@ -17,19 +17,17 @@ public class CommentController {
     private CommentServiceImpl commentService;
 
     @Autowired
-    public CommentController(CommentServiceImpl commentService){
+    public CommentController(CommentServiceImpl commentService) {
         this.commentService = commentService;
     }
 
     @PostMapping(value = "/comment/add/{language}")
-    public ResponseEntity addComment(@RequestBody CommentEntity commentEntity, @PathVariable String language){
+    public ResponseEntity addComment(@RequestBody CommentEntity commentEntity, @PathVariable String language) {
         MessageDTO messageDTO = commentService.addComment(commentEntity, language);
-        if(messageDTO == null){
+        if (messageDTO == null) {
             return new ResponseEntity<>(HttpStatus.OK);
-        }
-        else{
+        } else {
             return new ResponseEntity<>(messageDTO, HttpStatus.CONFLICT);
         }
     }
-
 }

@@ -1,8 +1,10 @@
 package pl.traveller.Services;
 
+import org.springframework.http.HttpHeaders;
 import pl.traveller.DTOs.*;
 import pl.traveller.Entities.UserEntity;
 
+import javax.security.sasl.AuthenticationException;
 import java.util.List;
 
 public interface UserService {
@@ -17,9 +19,9 @@ public interface UserService {
 
     MessageDTO register(UserEntity userEntity, String language);
 
-    MessageDTO deactivateAccount(long id, String language);
+    MessageDTO deactivateAccount(long userId, String language, HttpHeaders httpHeaders) throws AuthenticationException;
 
-    MessageDTO changePassword(ChangePasswordDTO changePasswordDTO, String language);
+    MessageDTO changePassword(ChangePasswordDTO changePasswordDTO, String language, HttpHeaders httpHeaders) throws AuthenticationException;
 
     MessageDTO resetPassword(ResetPasswordDTO resetPasswordDTO, String language);
 

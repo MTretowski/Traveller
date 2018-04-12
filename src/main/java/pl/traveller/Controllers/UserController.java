@@ -1,6 +1,7 @@
 package pl.traveller.Controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -11,6 +12,8 @@ import pl.traveller.DTOs.ResetPasswordDTO;
 import pl.traveller.DTOs.UserDTO;
 import pl.traveller.Entities.UserEntity;
 import pl.traveller.Services.UserServiceImpl;
+
+import javax.security.sasl.AuthenticationException;
 
 @Controller
 public class UserController {
@@ -26,8 +29,7 @@ public class UserController {
     public ResponseEntity register(@RequestBody UserEntity userEntity, @PathVariable String language) {
         if (userService.isAdmin(userEntity)) {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
-        }
-        else {
+        } else {
             MessageDTO messageDTO = userService.register(userEntity, language);
             if (messageDTO == null) {
                 return new ResponseEntity<>(HttpStatus.OK);
@@ -38,25 +40,33 @@ public class UserController {
     }
 
     @PutMapping(value = "/user/changePassword/{language}")
-    public ResponseEntity changePassword(@RequestBody ChangePasswordDTO changePasswordDTO, @PathVariable String language) {
-        MessageDTO messageDTO = userService.changePassword(changePasswordDTO, language);
-        if (messageDTO == null) {
-            return new ResponseEntity<>(HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(messageDTO, HttpStatus.CONFLICT);
+    public ResponseEntity changePassword(@RequestBody ChangePasswordDTO changePasswordDTO, @PathVariable String language, @RequestHeader
+            HttpHeaders httpHeaders) {
+        try {
+            MessageDTO messageDTO = userService.changePassword(changePasswordDTO, language, httpHeaders);
+            if (messageDTO == null) {
+                return new ResponseEntity<>(HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>(messageDTO, HttpStatus.CONFLICT);
+            }
+        } catch (AuthenticationException e) {
+            return new ResponseEntity(HttpStatus.FORBIDDEN);
         }
     }
 
-    @PutMapping(value = "/user/deactivate/{id}/{language}")
-    public ResponseEntity deactivateAccount(@PathVariable long id, @PathVariable String language) {
-        MessageDTO messageDTO = userService.deactivateAccount(id, language);
-        if (messageDTO == null) {
-            return new ResponseEntity<>(HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(messageDTO, HttpStatus.CONFLICT);
+    @PutMapping(value = "/user/deactivate/{userId}/{language}")
+    public ResponseEntity deactivateAccount(@PathVariable long userId, @PathVariable String language, @RequestHeader HttpHeaders httpHeaders) {
+        try {
+            MessageDTO messageDTO = userService.deactivateAccount(userId, language, httpHeaders);
+            if (messageDTO == null) {
+                return new ResponseEntity<>(HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>(messageDTO, HttpStatus.CONFLICT);
+            }
+        } catch (AuthenticationException e) {
+            return new ResponseEntity(HttpStatus.FORBIDDEN);
         }
     }
-
 
     @GetMapping(value = "/admin/user/all")
     public ResponseEntity findAll() {
@@ -87,5 +97,4 @@ public class UserController {
             return new ResponseEntity<>(messageDTO, HttpStatus.CONFLICT);
         }
     }
-
 }

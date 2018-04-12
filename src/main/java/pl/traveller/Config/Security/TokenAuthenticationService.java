@@ -1,5 +1,6 @@
 package pl.traveller.Config.Security;
 
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -12,11 +13,20 @@ import java.util.Date;
 
 import static java.util.Collections.emptyList;
 
-class TokenAuthenticationService {
+public class TokenAuthenticationService {
 
-    private static final long EXPIRATION = 864_000_000;
+    //private static final long EXPIRATION = 864_000_000;
+    private static final long EXPIRATION = 1;
     private static final String SECRET = "TIM_2018_I7B3S4_Tchon_Tretowski_Zien";
     private static final String HEADER_STRING = "Token";
+
+    public static String getSECRET() {
+        return SECRET;
+    }
+
+    public static String getHeaderString() {
+        return HEADER_STRING;
+    }
 
     static void addAuthentication(HttpServletResponse res, String username, UserServiceImpl userService) {
         String JWT = Jwts.builder()
@@ -31,16 +41,21 @@ class TokenAuthenticationService {
     static Authentication getAuthentication(HttpServletRequest request, UserServiceImpl userService) {
         String token = request.getHeader(HEADER_STRING);
         if (token != null) {
-            String user = Jwts.parser()
-                    .setSigningKey(SECRET)
-                    .parseClaimsJws(token)
-                    .getBody()
-                    .getSubject();
-
+            String user;
+            try{
+                user = Jwts.parser()
+                        .setSigningKey(SECRET)
+                        .parseClaimsJws(token)
+                        .getBody()
+                        .getSubject();
+            }catch (ExpiredJwtException e){
+                return null;
+            }
 
             if(request.getRequestURL().toString().contains("/admin/") && !userService.isAdmin(user)){
                 return null;
             }
+
             else {
                 return user != null ? new UsernamePasswordAuthenticationToken(user, null, emptyList()) : null;
             }

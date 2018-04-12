@@ -42,7 +42,6 @@ public class PhotoController {
         return new ResponseEntity<>(photoService.findAllNotAccepted(), HttpStatus.OK);
     }
 
-
     @PutMapping (value = "/admin/photo/accept/{photoId}/{language}")
     public ResponseEntity acceptPhoto(@PathVariable long photoId, @PathVariable String language){
         MessageDTO messageDTO = photoService.acceptPhoto(photoId, language);

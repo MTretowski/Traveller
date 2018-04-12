@@ -1,6 +1,7 @@
 package pl.traveller.Services;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 import pl.traveller.DTOs.*;
@@ -9,6 +10,7 @@ import pl.traveller.Entities.UserRoleEntity;
 import pl.traveller.Repositories.UserRepository;
 import pl.traveller.Repositories.UserRoleRepository;
 
+import javax.security.sasl.AuthenticationException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,12 +20,15 @@ public class UserServiceImpl implements UserService {
     private UserRepository userRepository;
     private UserRoleRepository userRoleRepository;
     private ErrorMessagesService errorMessagesService;
+    private AuthorizationServiceImpl authorizationService;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, UserRoleRepository userRoleRepository, ErrorMessagesService errorMessagesService) {
+    public UserServiceImpl(UserRepository userRepository, UserRoleRepository userRoleRepository, ErrorMessagesService errorMessagesService,
+                           AuthorizationServiceImpl authorizationService) {
         this.userRepository = userRepository;
         this.userRoleRepository = userRoleRepository;
         this.errorMessagesService = errorMessagesService;
+        this.authorizationService = authorizationService;
     }
 
     @Override
@@ -41,7 +46,7 @@ public class UserServiceImpl implements UserService {
     public List<UserDTO> findAll() {
         List<UserEntity> userEntities = userRepository.findAll();
         List<UserDTO> userDTOS = new ArrayList<>();
-        for(UserEntity userEntity: userEntities){
+        for (UserEntity userEntity : userEntities) {
             userDTOS.add(new UserDTO(
                     userEntity.getId(),
                     userEntity.getUsername(),
@@ -53,16 +58,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public String getUserIdByUsername(String username){
+    public String getUserIdByUsername(String username) {
         return String.valueOf(userRepository.findByUsername(username).getId());
     }
 
     @Override
     public MessageDTO register(UserEntity userEntity, String language) {
-        if(userRepository.findByUsername(userEntity.getUsername()) != null){
+        if (userRepository.findByUsername(userEntity.getUsername()) != null) {
             return new MessageDTO(errorMessagesService.getErrorMessage(language, "usernameTaken"));
-        }
-        else{
+        } else {
             userEntity.setPassword(BCrypt.hashpw(userEntity.getPassword(), BCrypt.gensalt()));
             userEntity.setActive(true);
             userRepository.save(userEntity);
@@ -71,32 +75,37 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public MessageDTO deactivateAccount(long id, String language) {
-        UserEntity userEntity = userRepository.findById(id);
+    public MessageDTO deactivateAccount(long userId, String language, HttpHeaders httpHeaders) throws AuthenticationException {
+        if (authorizationService.authenticate(httpHeaders, userId)) {
+            UserEntity userEntity = userRepository.findById(userId);
 
-        if(userEntity == null){
-            return new MessageDTO(errorMessagesService.getErrorMessage(language, "userNotFound"));
-        }
-        else{
-            userEntity.setActive(false);
-            userRepository.save(userEntity);
-            return null;
+            if (userEntity == null) {
+                return new MessageDTO(errorMessagesService.getErrorMessage(language, "userNotFound"));
+            } else {
+                userEntity.setActive(false);
+                userRepository.save(userEntity);
+                return null;
+            }
+        } else {
+            throw new AuthenticationException();
         }
     }
 
     @Override
-    public MessageDTO changePassword(ChangePasswordDTO changePasswordDTO, String language) {
-        UserEntity userEntity = userRepository.findById(changePasswordDTO.getUserId());
+    public MessageDTO changePassword(ChangePasswordDTO changePasswordDTO, String language, HttpHeaders httpHeaders) throws AuthenticationException {
+        if (authorizationService.authenticate(httpHeaders, changePasswordDTO.getUserId())) {
+            UserEntity userEntity = userRepository.findById(changePasswordDTO.getUserId());
 
-        if(userEntity == null){
-            return new MessageDTO(errorMessagesService.getErrorMessage(language, "userNotFound"));
-        }
-        else if(!BCrypt.checkpw(changePasswordDTO.getOldPassword(), userEntity.getPassword())){
-            return new MessageDTO(errorMessagesService.getErrorMessage(language, "incorrectOldPassword"));
-        }
-        else{
-            userEntity.setPassword(BCrypt.hashpw(changePasswordDTO.getNewPassword(), BCrypt.gensalt()));
-            return null;
+            if (userEntity == null) {
+                return new MessageDTO(errorMessagesService.getErrorMessage(language, "userNotFound"));
+            } else if (!BCrypt.checkpw(changePasswordDTO.getOldPassword(), userEntity.getPassword())) {
+                return new MessageDTO(errorMessagesService.getErrorMessage(language, "incorrectOldPassword"));
+            } else {
+                userEntity.setPassword(BCrypt.hashpw(changePasswordDTO.getNewPassword(), BCrypt.gensalt()));
+                return null;
+            }
+        } else {
+            throw new AuthenticationException();
         }
     }
 
@@ -104,17 +113,16 @@ public class UserServiceImpl implements UserService {
     public MessageDTO resetPassword(ResetPasswordDTO resetPasswordDTO, String language) {
         UserEntity userEntity = userRepository.findById(resetPasswordDTO.getUserId());
 
-        if(userEntity == null){
+        if (userEntity == null) {
             return new MessageDTO(errorMessagesService.getErrorMessage(language, "userNotFound"));
-        }
-        else{
+        } else {
             userEntity.setPassword(BCrypt.hashpw(resetPasswordDTO.getNewPassword(), BCrypt.gensalt()));
             return null;
         }
     }
 
     @Override
-    public MessageDTO editUser(UserDTO userDTO, String language){
+    public MessageDTO editUser(UserDTO userDTO, String language) {
         if (userRepository.findById(userDTO.getId()) == null) {
             return new MessageDTO(errorMessagesService.getErrorMessage(language, "userNotFound"));
         } else {
@@ -139,7 +147,7 @@ public class UserServiceImpl implements UserService {
         List<UserRoleEntity> userRoleEntities = userRoleRepository.findAll();
         List<UserRoleDTO> userRoleDTOS = new ArrayList<>(userRoleEntities.size());
 
-        for(UserRoleEntity userRoleEntity: userRoleEntities){
+        for (UserRoleEntity userRoleEntity : userRoleEntities) {
             userRoleDTOS.add(new UserRoleDTO(
                     userRoleEntity.getId(),
                     userRoleEntity.getLabel()
@@ -147,4 +155,5 @@ public class UserServiceImpl implements UserService {
         }
         return userRoleDTOS;
     }
+
 }
