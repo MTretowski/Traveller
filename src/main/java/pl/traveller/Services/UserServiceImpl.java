@@ -19,11 +19,11 @@ public class UserServiceImpl implements UserService {
 
     private UserRepository userRepository;
     private UserRoleRepository userRoleRepository;
-    private ErrorMessagesService errorMessagesService;
+    private ErrorMessagesServiceImpl errorMessagesService;
     private AuthenticationServiceImpl authorizationService;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, UserRoleRepository userRoleRepository, ErrorMessagesService errorMessagesService,
+    public UserServiceImpl(UserRepository userRepository, UserRoleRepository userRoleRepository, ErrorMessagesServiceImpl errorMessagesService,
                            AuthenticationServiceImpl authorizationService) {
         this.userRepository = userRepository;
         this.userRoleRepository = userRoleRepository;

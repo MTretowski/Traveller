@@ -21,11 +21,11 @@ public class PhotoServiceImpl implements PhotoService {
 
     private PhotoRepository photoRepository;
     private PhotoFileRepository photoFileRepository;
-    private ErrorMessagesService errorMessagesService;
+    private ErrorMessagesServiceImpl errorMessagesService;
     private AuthenticationServiceImpl authenticationService;
 
     @Autowired
-    public PhotoServiceImpl(PhotoRepository photoRepository, PhotoFileRepository photoFileRepository, ErrorMessagesService errorMessagesService, AuthenticationServiceImpl authenticationService) {
+    public PhotoServiceImpl(PhotoRepository photoRepository, PhotoFileRepository photoFileRepository, ErrorMessagesServiceImpl errorMessagesService, AuthenticationServiceImpl authenticationService) {
         this.photoRepository = photoRepository;
         this.photoFileRepository = photoFileRepository;
         this.errorMessagesService = errorMessagesService;

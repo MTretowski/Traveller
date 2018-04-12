@@ -40,8 +40,7 @@ public class UserController {
     }
 
     @PutMapping(value = "/user/changePassword/{language}")
-    public ResponseEntity changePassword(@RequestBody ChangePasswordDTO changePasswordDTO, @PathVariable String language, @RequestHeader
-            HttpHeaders httpHeaders) {
+    public ResponseEntity changePassword(@RequestBody ChangePasswordDTO changePasswordDTO, @PathVariable String language, @RequestHeader HttpHeaders httpHeaders) {
         try {
             MessageDTO messageDTO = userService.changePassword(changePasswordDTO, language, httpHeaders);
             if (messageDTO == null) {

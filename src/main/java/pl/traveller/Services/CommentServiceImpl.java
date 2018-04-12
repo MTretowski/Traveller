@@ -10,10 +10,10 @@ import pl.traveller.Repositories.CommentRepository;
 public class CommentServiceImpl implements CommentService {
 
     private CommentRepository commentRepository;
-    private ErrorMessagesService errorMessagesService;
+    private ErrorMessagesServiceImpl errorMessagesService;
 
     @Autowired
-    public CommentServiceImpl(CommentRepository commentRepository, ErrorMessagesService errorMessagesService){
+    public CommentServiceImpl(CommentRepository commentRepository, ErrorMessagesServiceImpl errorMessagesService){
         this.commentRepository = commentRepository;
         this.errorMessagesService = errorMessagesService;
     }

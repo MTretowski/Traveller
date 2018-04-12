@@ -1,12 +1,14 @@
 package pl.traveller.Services;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import pl.traveller.DTOs.MessageDTO;
 import pl.traveller.DTOs.VisitDTO;
 import pl.traveller.Entities.VisitEntity;
 import pl.traveller.Repositories.VisitRepository;
 
+import javax.security.sasl.AuthenticationException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,12 +16,14 @@ import java.util.List;
 public class VisitServiceImpl implements VisitService {
 
     private VisitRepository visitRepository;
-    private ErrorMessagesService errorMessagesService;
+    private ErrorMessagesServiceImpl errorMessagesService;
+    private AuthenticationServiceImpl authenticationService;
 
     @Autowired
-    public VisitServiceImpl(VisitRepository visitRepository, ErrorMessagesService errorMessagesService) {
+    public VisitServiceImpl(VisitRepository visitRepository, ErrorMessagesServiceImpl errorMessagesService, AuthenticationServiceImpl authenticationService) {
         this.visitRepository = visitRepository;
         this.errorMessagesService = errorMessagesService;
+        this.authenticationService = authenticationService;
     }
 
     private List<VisitDTO> findMyPlaces(long userId, boolean visited) {
@@ -39,6 +43,24 @@ public class VisitServiceImpl implements VisitService {
     }
 
     @Override
+    public List<VisitDTO> findMyVisitedPlaces(long userId, HttpHeaders httpHeaders) throws AuthenticationException {
+        if (authenticationService.authenticate(httpHeaders, userId)) {
+            return findMyPlaces(userId, true);
+        } else {
+            throw new AuthenticationException();
+        }
+    }
+
+    @Override
+    public List<VisitDTO> findMyNotVisitedPlaces(long userId, HttpHeaders httpHeaders) throws AuthenticationException {
+        if (authenticationService.authenticate(httpHeaders, userId)) {
+            return findMyPlaces(userId, false);
+        } else {
+            throw new AuthenticationException();
+        }
+    }
+
+    @Override
     public List<VisitDTO> findMyVisitedPlaces(long userId) {
         return findMyPlaces(userId, true);
     }
@@ -49,86 +71,95 @@ public class VisitServiceImpl implements VisitService {
     }
 
     @Override
-    public void clearHistory(long userId) {
-        List<VisitEntity> visitEntities = visitRepository.findAllByUserIdAndVisitedAndVisible(userId, true, true);
-        if (visitEntities.size() > 0) {
-            for (VisitEntity visitEntity : visitEntities) {
-                visitEntity.setVisible(false);
+    public List<VisitDTO> clearHistory(long userId, HttpHeaders httpHeaders) throws AuthenticationException {
+        if (authenticationService.authenticate(httpHeaders, userId)) {
+            List<VisitEntity> visitEntities = visitRepository.findAllByUserIdAndVisitedAndVisible(userId, true, true);
+            if (visitEntities.size() > 0) {
+                for (VisitEntity visitEntity : visitEntities) {
+                    visitEntity.setVisible(false);
+                }
+                visitRepository.save(visitEntities);
             }
-            visitRepository.save(visitEntities);
+            return findMyVisitedPlaces(userId);
+        } else {
+            throw new AuthenticationException();
         }
     }
 
     @Override
-    public boolean hideVisitedPlace(long visitId, long userId) {
-        VisitEntity visitEntity = visitRepository.findById(visitId);
-        if (visitEntity != null) {
-            if(visitEntity.getUserId() == userId) {
-                visitEntity.setVisible(false);
+    public MessageDTO hideVisitedPlace(long visitId, long userId, String language, HttpHeaders httpHeaders) throws AuthenticationException {
+        if (authenticationService.authenticate(httpHeaders, userId)) {
+            VisitEntity visitEntity = visitRepository.findById(visitId);
+            if (visitEntity != null) {
+                if (userId == visitEntity.getUserId()) {
+                    visitEntity.setVisible(false);
+                    visitRepository.save(visitEntity);
+                    return null;
+                } else {
+                    throw new AuthenticationException();
+                }
+            } else {
+                return new MessageDTO(errorMessagesService.getErrorMessage(language, "visitNotFound"));
+            }
+        } else {
+            throw new AuthenticationException();
+        }
+    }
+
+    @Override
+    public MessageDTO newVisit(VisitEntity visitEntity, String language, HttpHeaders httpHeaders) throws AuthenticationException {
+        if (authenticationService.authenticate(httpHeaders, visitEntity.getUserId())) {
+            VisitEntity visitEntityTemp = visitRepository.findByUserIdAndPlaceIdAndVisited(visitEntity.getUserId(), visitEntity.getPlaceId(), false);
+            if (visitEntityTemp != null) {
+                return new MessageDTO(errorMessagesService.getErrorMessage(language, "visitAlreadyExist"));
+            } else {
                 visitRepository.save(visitEntity);
-                return true;
+                return null;
             }
-            else{
-                return false;
-            }
-        }
-        else{
-            return false;
+        } else {
+            throw new AuthenticationException();
         }
     }
 
     @Override
-    public MessageDTO newVisit(VisitEntity visitEntity, String language) {
-        VisitEntity visitEntityTemp = visitRepository.findByUserIdAndPlaceIdAndVisited(visitEntity.getUserId(), visitEntity.getPlaceId(), false);
-        if(visitEntityTemp != null){
-            return new MessageDTO(errorMessagesService.getErrorMessage(language, "visitAlreadyExist"));
-        }
-        else{
-            visitRepository.save(visitEntity);
-            return null;
+    public MessageDTO deleteNotVisitedPlace(long visitId, long userId, String language, HttpHeaders httpHeaders) throws AuthenticationException {
+        if (authenticationService.authenticate(httpHeaders, userId)) {
+            VisitEntity visitEntity = visitRepository.findById(visitId);
+            if (visitEntity != null) {
+                if (userId == visitEntity.getUserId()) {
+                    visitRepository.deleteById(visitId);
+                    return null;
+                } else {
+                    throw new AuthenticationException();
+                }
+            }
+            return new MessageDTO(errorMessagesService.getErrorMessage(language, "visitNotFound"));
+        } else {
+            throw new AuthenticationException();
         }
     }
 
     @Override
-    public boolean deleteNotVisitedPlace(long visitId, long userId) {
-        VisitEntity visitEntity = visitRepository.findById(visitId);
-        if(visitEntity != null){
-            if(visitEntity.getUserId() == userId){
-                visitRepository.deleteById(visitId);
-                return true;
+    public MessageDTO selectPlaceAsVisited(long visitId, long userId, String language, HttpHeaders httpHeaders) throws AuthenticationException {
+        if (authenticationService.authenticate(httpHeaders, userId)) {
+            VisitEntity visitEntity = visitRepository.findById(visitId);
+            if (visitEntity != null) {
+                if (visitEntity.getUserId() == userId) {
+                    visitEntity.setVisited(true);
+                    return null;
+                } else {
+                    throw new AuthenticationException();
+                }
+            } else {
+                return new MessageDTO(errorMessagesService.getErrorMessage(language, "placeNotFound"));
             }
-            else{
-                return false;
-            }
-        }
-        else{
-            return false;
-        }
-
-
-    }
-
-    @Override
-    public boolean selectPlaceAsVisited(long visitId, long userId) {
-        VisitEntity visitEntity = visitRepository.findById(visitId);
-        if(visitEntity != null){
-            if(visitEntity.getUserId() == userId){
-                visitEntity.setVisited(true);
-                return true;
-            }
-            else{
-                return false;
-            }
-        }
-        else{
-            return false;
+        } else {
+            throw new AuthenticationException();
         }
     }
 
     @Override
     public List<VisitEntity> findAllByPlaceId(long placeId) {
-        return null;
+        return visitRepository.findAllByPlaceId(placeId);
     }
-
-
 }
