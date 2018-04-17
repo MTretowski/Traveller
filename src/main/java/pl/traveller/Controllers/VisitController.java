@@ -12,6 +12,7 @@ import pl.traveller.Entities.VisitEntity;
 import pl.traveller.Services.VisitServiceImpl;
 
 import javax.security.sasl.AuthenticationException;
+import java.sql.Timestamp;
 
 @Controller
 public class VisitController {
@@ -69,10 +70,10 @@ public class VisitController {
         }
     }
 
-    @PutMapping(value = "/visit/selectPlaceAsVisited/{visitId}/{userId}/{language}")
-    public ResponseEntity selectPlaceAsVisited(@PathVariable long visitId, @PathVariable long userId, @PathVariable String language, @RequestHeader HttpHeaders httpHeaders) {
+    @PutMapping(value = "/visit/selectPlaceAsVisited/{visitId}/{userId}/{date}/{language}")
+    public ResponseEntity selectPlaceAsVisited(@PathVariable long visitId, @PathVariable long userId, @PathVariable Timestamp date, @PathVariable String language, @RequestHeader HttpHeaders httpHeaders) {
         try {
-            MessageDTO messageDTO = visitService.selectPlaceAsVisited(visitId, userId, language, httpHeaders);
+            MessageDTO messageDTO = visitService.selectPlaceAsVisited(visitId, userId, date, language, httpHeaders);
             if (messageDTO == null) {
                 return new ResponseEntity<>(visitService.findMyVisitedPlaces(userId), HttpStatus.OK);
             } else {

@@ -3,27 +3,33 @@ package pl.traveller.Services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import pl.traveller.DTOs.MessageDTO;
 import pl.traveller.DTOs.VisitDTO;
 import pl.traveller.Entities.VisitEntity;
+import pl.traveller.Repositories.PlaceRepository;
 import pl.traveller.Repositories.VisitRepository;
 
 import javax.security.sasl.AuthenticationException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@Transactional
 public class VisitServiceImpl implements VisitService {
 
     private VisitRepository visitRepository;
     private ErrorMessagesServiceImpl errorMessagesService;
     private AuthenticationServiceImpl authenticationService;
+    private PlaceRepository placeRepository;
 
     @Autowired
-    public VisitServiceImpl(VisitRepository visitRepository, ErrorMessagesServiceImpl errorMessagesService, AuthenticationServiceImpl authenticationService) {
+    public VisitServiceImpl(VisitRepository visitRepository, ErrorMessagesServiceImpl errorMessagesService, AuthenticationServiceImpl authenticationService, PlaceRepository placeRepository) {
         this.visitRepository = visitRepository;
         this.errorMessagesService = errorMessagesService;
         this.authenticationService = authenticationService;
+        this.placeRepository = placeRepository;
     }
 
     private List<VisitDTO> findMyPlaces(long userId, boolean visited) {
@@ -77,8 +83,8 @@ public class VisitServiceImpl implements VisitService {
             if (visitEntities.size() > 0) {
                 for (VisitEntity visitEntity : visitEntities) {
                     visitEntity.setVisible(false);
+                    visitRepository.save(visitEntity);
                 }
-                visitRepository.save(visitEntities);
             }
             return findMyVisitedPlaces(userId);
         } else {
@@ -91,12 +97,17 @@ public class VisitServiceImpl implements VisitService {
         if (authenticationService.authenticate(httpHeaders, userId)) {
             VisitEntity visitEntity = visitRepository.findById(visitId);
             if (visitEntity != null) {
-                if (userId == visitEntity.getUserId()) {
-                    visitEntity.setVisible(false);
-                    visitRepository.save(visitEntity);
-                    return null;
-                } else {
-                    throw new AuthenticationException();
+                if(visitEntity.isVisited()) {
+                    if (userId == visitEntity.getUserId()) {
+                        visitEntity.setVisible(false);
+                        visitRepository.save(visitEntity);
+                        return null;
+                    } else {
+                        throw new AuthenticationException();
+                    }
+                }
+                else{
+                   return new MessageDTO(errorMessagesService.getErrorMessage(language,"visitNotMade"));
                 }
             } else {
                 return new MessageDTO(errorMessagesService.getErrorMessage(language, "visitNotFound"));
@@ -113,8 +124,16 @@ public class VisitServiceImpl implements VisitService {
             if (visitEntityTemp != null) {
                 return new MessageDTO(errorMessagesService.getErrorMessage(language, "visitAlreadyExist"));
             } else {
-                visitRepository.save(visitEntity);
-                return null;
+                if(placeRepository.findById(visitEntity.getPlaceId()) != null) {
+                    visitEntity.setVisited(false);
+                    visitEntity.setVisible(true);
+                    visitEntity.setDate(null);
+                    visitRepository.save(visitEntity);
+                    return null;
+                }
+                else{
+                    return new MessageDTO(errorMessagesService.getErrorMessage(language, "placeNotFound"));
+                }
             }
         } else {
             throw new AuthenticationException();
@@ -126,11 +145,16 @@ public class VisitServiceImpl implements VisitService {
         if (authenticationService.authenticate(httpHeaders, userId)) {
             VisitEntity visitEntity = visitRepository.findById(visitId);
             if (visitEntity != null) {
-                if (userId == visitEntity.getUserId()) {
-                    visitRepository.deleteById(visitId);
-                    return null;
-                } else {
-                    throw new AuthenticationException();
+                if(!visitEntity.isVisited()) {
+                    if (userId == visitEntity.getUserId()) {
+                        visitRepository.deleteById(visitId);
+                        return null;
+                    } else {
+                        throw new AuthenticationException();
+                    }
+                }
+                else{
+                    return new MessageDTO(errorMessagesService.getErrorMessage(language,"placeAlreadyVisitedCannotDelete"));
                 }
             }
             return new MessageDTO(errorMessagesService.getErrorMessage(language, "visitNotFound"));
@@ -140,13 +164,24 @@ public class VisitServiceImpl implements VisitService {
     }
 
     @Override
-    public MessageDTO selectPlaceAsVisited(long visitId, long userId, String language, HttpHeaders httpHeaders) throws AuthenticationException {
+    public MessageDTO selectPlaceAsVisited(long visitId, long userId, Timestamp date, String language, HttpHeaders httpHeaders) throws AuthenticationException {
         if (authenticationService.authenticate(httpHeaders, userId)) {
             VisitEntity visitEntity = visitRepository.findById(visitId);
             if (visitEntity != null) {
                 if (visitEntity.getUserId() == userId) {
-                    visitEntity.setVisited(true);
-                    return null;
+                    if(!visitEntity.isVisited()) {
+                        if (date.before(new Timestamp(System.currentTimeMillis()))) {
+                            visitEntity.setVisited(true);
+                            visitEntity.setDate(date);
+                            visitRepository.save(visitEntity);
+                            return null;
+                        } else {
+                            return new MessageDTO(errorMessagesService.getErrorMessage(language, "dateFromTheFuture"));
+                        }
+                    }
+                    else{
+                        return new MessageDTO(errorMessagesService.getErrorMessage(language, "placeAlreadyVisited"));
+                    }
                 } else {
                     throw new AuthenticationException();
                 }

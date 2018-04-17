@@ -5,3 +5,8 @@ placeAlreadyExist;To miejsce już istnieje w bazie danych.
 placeNotFound;W bazie danych nie znaleziono miejsca o podanym identyfikatorze.
 visitAlreadyExist;To miejsce zostało już oznaczone jako 'Do odwiedzenia'.
 visitAlreadyCommented;Już opublikowałeś komentarz do tej wizyty.
+visitNotFound;W bazie danych nie znaleziono wizyto o podanym identyfikatorze.
+placeAlreadyVisited;Wizyta została już oznaczona jako odbyta.
+placeAlreadyVisitedCannotDelete;Wizyta została już oznaczona jako odbyta. Nie można jej usunąć.
+dateFromTheFuture;Wprowadzona data pochodzi z przyszłości
+visitNotMade;Wizyta nie została jeszcze oznaczona jako odbyta.

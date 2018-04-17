@@ -6,6 +6,7 @@ import pl.traveller.DTOs.VisitDTO;
 import pl.traveller.Entities.VisitEntity;
 
 import javax.security.sasl.AuthenticationException;
+import java.sql.Timestamp;
 import java.util.List;
 
 public interface VisitService {
@@ -26,7 +27,7 @@ public interface VisitService {
 
     MessageDTO deleteNotVisitedPlace(long visitId, long userId, String language, HttpHeaders httpHeaders) throws AuthenticationException;
 
-    MessageDTO selectPlaceAsVisited(long visitId, long userId, String language, HttpHeaders httpHeaders) throws AuthenticationException;
+    MessageDTO selectPlaceAsVisited(long visitId, long userId, Timestamp date, String language, HttpHeaders httpHeaders) throws AuthenticationException;
 
     List<VisitEntity> findAllByPlaceId(long placeId);
 }
