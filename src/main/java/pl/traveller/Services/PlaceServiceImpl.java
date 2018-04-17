@@ -76,6 +76,8 @@ public class PlaceServiceImpl implements PlaceService {
             } else if (userRepository.findById(placeEntity.getUserId()) == null) {
                 return new MessageDTO(errorMessagesService.getErrorMessage(language, "userNotFound"));
             } else {
+                placeEntity.setActive(true);
+                placeEntity.setAccepted(false);
                 placeRepository.save(placeEntity);
                 return null;
             }
@@ -86,22 +88,26 @@ public class PlaceServiceImpl implements PlaceService {
 
     @Override
     public MessageDTO edit(PlaceEntity placeEntity, String language) {
-        PlaceEntity placeEntityInDatabase = placeRepository.findByNameAndAddress(placeEntity.getName(), placeEntity.getAddress());
-        if (placeEntityInDatabase == null || placeEntityInDatabase.getId() == placeEntity.getId()) {
-            placeEntityInDatabase = placeRepository.findByNameAndGps(placeEntity.getName(), placeEntity.getGps());
+        if (placeRepository.findById(placeEntity.getId()) == null) {
+            return new MessageDTO(errorMessagesService.getErrorMessage(language, "placeNotFound"));
+        } else {
+            PlaceEntity placeEntityInDatabase = placeRepository.findByNameAndAddress(placeEntity.getName(), placeEntity.getAddress());
             if (placeEntityInDatabase == null || placeEntityInDatabase.getId() == placeEntity.getId()) {
-                if (userRepository.findById(placeEntity.getUserId()) != null) {
-                    placeRepository.save(placeEntity);
-                    return null;
-                } else {
-                    return new MessageDTO(errorMessagesService.getErrorMessage(language, "userNotFound"));
-                }
+                placeEntityInDatabase = placeRepository.findByNameAndGps(placeEntity.getName(), placeEntity.getGps());
+                if (placeEntityInDatabase == null || placeEntityInDatabase.getId() == placeEntity.getId()) {
+                    if (userRepository.findById(placeEntity.getUserId()) != null) {
+                        placeRepository.save(placeEntity);
+                        return null;
+                    } else {
+                        return new MessageDTO(errorMessagesService.getErrorMessage(language, "userNotFound"));
+                    }
 
+                } else {
+                    return new MessageDTO(errorMessagesService.getErrorMessage(language, "placeAlreadyExist"));
+                }
             } else {
                 return new MessageDTO(errorMessagesService.getErrorMessage(language, "placeAlreadyExist"));
             }
-        } else {
-            return new MessageDTO(errorMessagesService.getErrorMessage(language, "placeAlreadyExist"));
         }
     }
 
