@@ -153,12 +153,15 @@ public class PlaceServiceImpl implements PlaceService {
         CommentEntity commentEntity;
 
         for (VisitEntity visitEntity : visitEntities) {
+            commentEntity = null;
             commentEntity = commentService.findByVisitId(visitEntity.getId());
-            commentDTOS.add(new CommentDTO(
-                    commentEntity.getText(),
-                    commentEntity.isRecommended(),
-                    visitEntity.getDate()
-            ));
+            if(commentEntity != null) {
+                commentDTOS.add(new CommentDTO(
+                        commentEntity.getText(),
+                        commentEntity.isRecommended(),
+                        visitEntity.getDate()
+                ));
+            }
         }
         return commentDTOS;
     }
