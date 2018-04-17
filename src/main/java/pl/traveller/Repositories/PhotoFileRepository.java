@@ -8,4 +8,6 @@ import pl.traveller.Entities.PhotoFileEntity;
 public interface PhotoFileRepository extends CrudRepository<PhotoFileEntity, Long> {
 
     PhotoFileEntity findById(long id);
+
+    void deleteById(long id);
 }

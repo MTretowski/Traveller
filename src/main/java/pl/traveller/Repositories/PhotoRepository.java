@@ -13,5 +13,7 @@ public interface PhotoRepository extends CrudRepository<PhotoEntity, Integer>{
 
     PhotoEntity findById(long id);
 
-    List<PhotoEntity> findAllByPlaceId(long placeId);
+    List<PhotoEntity> findAllByPlaceIdAndAccepted(long placeId, boolean accepted);
+
+    void deleteById(long id);
 }

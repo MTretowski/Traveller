@@ -3,6 +3,7 @@ package pl.traveller.Services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import pl.traveller.DTOs.MessageDTO;
 import pl.traveller.DTOs.NewPhotoDTO;
 import pl.traveller.DTOs.PhotoDTO;
@@ -13,10 +14,12 @@ import pl.traveller.Repositories.PhotoFileRepository;
 import pl.traveller.Repositories.PhotoRepository;
 
 import javax.security.sasl.AuthenticationException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@Transactional
 public class PhotoServiceImpl implements PhotoService {
 
     private PhotoRepository photoRepository;
@@ -62,7 +65,7 @@ public class PhotoServiceImpl implements PhotoService {
 
     @Override
     public List<PhotoDTO> findAllByPlaceId(long placeId) {
-        List<PhotoEntity> photoEntities = photoRepository.findAllByPlaceId(placeId);
+        List<PhotoEntity> photoEntities = photoRepository.findAllByPlaceIdAndAccepted(placeId, true);
         List<PhotoDTO> photoDTOS = new ArrayList<>();
         for (PhotoEntity photoEntity : photoEntities) {
             photoDTOS.add(new PhotoDTO(
@@ -101,33 +104,35 @@ public class PhotoServiceImpl implements PhotoService {
 
     @Override
     public void addPhoto(NewPhotoDTO newPhotoDTO, HttpHeaders httpHeaders) throws AuthenticationException {
-        if(authenticationService.authenticate(httpHeaders, newPhotoDTO.getUserId())){
+        if (authenticationService.authenticate(httpHeaders, newPhotoDTO.getUserId())) {
+
             PhotoFileEntity photoFileEntity = new PhotoFileEntity();
             photoFileEntity.setFile(newPhotoDTO.getFile());
             photoFileRepository.save(photoFileEntity);
 
             PhotoEntity photoEntity = new PhotoEntity();
-            photoEntity.setDate(newPhotoDTO.getDate());
+            photoEntity.setDate(new Timestamp(newPhotoDTO.getDate().getTime()));
             photoEntity.setAccepted(false);
             photoEntity.setUserId(newPhotoDTO.getUserId());
             photoEntity.setPlaceId(newPhotoDTO.getPlaceId());
             photoEntity.setPhotoFileId(photoFileEntity.getId());
             photoRepository.save(photoEntity);
-        }
-        else{
+        } else {
             throw new AuthenticationException();
         }
     }
 
     @Override
-    public void deletePhoto(long photoId) {
+    public MessageDTO deletePhoto(long photoId, String language) {
         PhotoEntity photoEntity = photoRepository.findById(photoId);
-        if(photoEntity != null){
-            PhotoFileEntity photoFileEntity = photoFileRepository.findById(photoEntity.getPhotoFileId());
-            if(photoFileEntity != null){
-                photoFileRepository.delete(photoFileEntity);
-            }
-            photoRepository.delete(photoEntity);
+        if (photoEntity != null) {
+            long photoFileId = photoEntity.getPhotoFileId();
+            photoRepository.deleteById(photoId);
+            photoFileRepository.deleteById(photoFileId);
+            return null;
+        }
+        else{
+            return new MessageDTO(errorMessagesService.getErrorMessage(language, "photoNotFound"));
         }
     }
 }

@@ -12,6 +12,7 @@ public class PhotoFileEntity {
     private Collection<PhotoEntity> photoFilesById;
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     public long getId() {
         return id;

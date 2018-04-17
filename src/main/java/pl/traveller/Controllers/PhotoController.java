@@ -65,11 +65,14 @@ public class PhotoController {
         }
     }
 
-    @DeleteMapping (value = "/admin/photo/delete/{photoId}")
-    public ResponseEntity deletePhoto(@PathVariable long photoId){
-        photoService.deletePhoto(photoId);
-        return new ResponseEntity<>(HttpStatus.OK);
+    @DeleteMapping (value = "/admin/photo/delete/{photoId}/{language}")
+    public ResponseEntity deletePhoto(@PathVariable long photoId, @PathVariable String language){
+        MessageDTO messageDTO = photoService.deletePhoto(photoId, language);
+        if(messageDTO == null){
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+        else{
+            return new ResponseEntity<>(messageDTO, HttpStatus.CONFLICT);
+        }
     }
-
-
 }

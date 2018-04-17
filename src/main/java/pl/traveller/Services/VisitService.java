@@ -3,6 +3,7 @@ package pl.traveller.Services;
 import org.springframework.http.HttpHeaders;
 import pl.traveller.DTOs.MessageDTO;
 import pl.traveller.DTOs.VisitDTO;
+import pl.traveller.DTOs.VisitDateDTO;
 import pl.traveller.Entities.VisitEntity;
 
 import javax.security.sasl.AuthenticationException;
@@ -27,7 +28,7 @@ public interface VisitService {
 
     MessageDTO deleteNotVisitedPlace(long visitId, long userId, String language, HttpHeaders httpHeaders) throws AuthenticationException;
 
-    MessageDTO selectPlaceAsVisited(long visitId, long userId, Timestamp date, String language, HttpHeaders httpHeaders) throws AuthenticationException;
+    MessageDTO selectPlaceAsVisited(VisitDateDTO visitDateDTO, String language, HttpHeaders httpHeaders) throws AuthenticationException;
 
     List<VisitEntity> findAllByPlaceId(long placeId);
 }

@@ -4,15 +4,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import pl.traveller.DTOs.MessageDTO;
+import pl.traveller.DTOs.VisitDateDTO;
 import pl.traveller.Entities.VisitEntity;
 import pl.traveller.Services.VisitServiceImpl;
 
 import javax.security.sasl.AuthenticationException;
-import java.sql.Timestamp;
+import java.util.Date;
 
 @Controller
 public class VisitController {
@@ -70,12 +70,12 @@ public class VisitController {
         }
     }
 
-    @PutMapping(value = "/visit/selectPlaceAsVisited/{visitId}/{userId}/{date}/{language}")
-    public ResponseEntity selectPlaceAsVisited(@PathVariable long visitId, @PathVariable long userId, @PathVariable Timestamp date, @PathVariable String language, @RequestHeader HttpHeaders httpHeaders) {
+    @PutMapping(value = "/visit/selectPlaceAsVisited/{language}")
+    public ResponseEntity selectPlaceAsVisited(@RequestBody VisitDateDTO visitDateDTO, @PathVariable String language, @RequestHeader HttpHeaders httpHeaders) {
         try {
-            MessageDTO messageDTO = visitService.selectPlaceAsVisited(visitId, userId, date, language, httpHeaders);
+            MessageDTO messageDTO = visitService.selectPlaceAsVisited(visitDateDTO, language, httpHeaders);
             if (messageDTO == null) {
-                return new ResponseEntity<>(visitService.findMyVisitedPlaces(userId), HttpStatus.OK);
+                return new ResponseEntity<>(visitService.findMyVisitedPlaces(visitDateDTO.getUserId()), HttpStatus.OK);
             } else {
                 return new ResponseEntity<>(messageDTO, HttpStatus.CONFLICT);
             }

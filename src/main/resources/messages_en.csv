@@ -7,6 +7,7 @@ visitAlreadyExist;This place was already selected as 'To visit'.
 visitAlreadyCommented;You have already posted a comment to this visit.
 visitNotFound;The visit with the given ID was not found in database.
 placeAlreadyVisited;Visit has been already marked as made.
-placeAlreadyVisitedCannotDelete;Visit has been already marked as made. Is unable to delete id
+placeAlreadyVisitedCannotDelete;Visit has been already marked as made. Is unable to delete id.
 dateFromTheFuture;The entered date comes from the future.
 visitNotMade;Visit has not been already marked as made.
+photoNotFound;The photo with the given ID was not found in database;

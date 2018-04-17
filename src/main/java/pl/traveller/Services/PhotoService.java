@@ -23,5 +23,5 @@ public interface PhotoService {
 
     void addPhoto(NewPhotoDTO newPhotoDTO, HttpHeaders httpHeaders) throws AuthenticationException;
 
-    void deletePhoto(long photoId);
+    MessageDTO deletePhoto(long photoId, String language);
 }

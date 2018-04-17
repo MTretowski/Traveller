@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pl.traveller.DTOs.MessageDTO;
 import pl.traveller.DTOs.VisitDTO;
+import pl.traveller.DTOs.VisitDateDTO;
 import pl.traveller.Entities.VisitEntity;
 import pl.traveller.Repositories.PlaceRepository;
 import pl.traveller.Repositories.VisitRepository;
@@ -164,15 +165,15 @@ public class VisitServiceImpl implements VisitService {
     }
 
     @Override
-    public MessageDTO selectPlaceAsVisited(long visitId, long userId, Timestamp date, String language, HttpHeaders httpHeaders) throws AuthenticationException {
-        if (authenticationService.authenticate(httpHeaders, userId)) {
-            VisitEntity visitEntity = visitRepository.findById(visitId);
+    public MessageDTO selectPlaceAsVisited(VisitDateDTO visitDateDTO, String language, HttpHeaders httpHeaders) throws AuthenticationException {
+        if (authenticationService.authenticate(httpHeaders, visitDateDTO.getUserId())) {
+            VisitEntity visitEntity = visitRepository.findById(visitDateDTO.getVisitId());
             if (visitEntity != null) {
-                if (visitEntity.getUserId() == userId) {
+                if (visitEntity.getUserId() == visitDateDTO.getUserId()) {
                     if(!visitEntity.isVisited()) {
-                        if (date.before(new Timestamp(System.currentTimeMillis()))) {
+                        if (visitDateDTO.getDate().before(new Timestamp(System.currentTimeMillis()))) {
                             visitEntity.setVisited(true);
-                            visitEntity.setDate(date);
+                            visitEntity.setDate(visitDateDTO.getDate());
                             visitRepository.save(visitEntity);
                             return null;
                         } else {

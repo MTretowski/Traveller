@@ -9,12 +9,11 @@ import java.sql.Timestamp;
 
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
-public class NewPhotoDTO {
+@AllArgsConstructor
+public class VisitDateDTO {
 
-    private byte[] file;
     private Timestamp date;
+    private long visitId;
     private long userId;
-    private long placeId;
 }
