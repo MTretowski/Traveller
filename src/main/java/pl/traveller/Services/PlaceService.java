@@ -11,9 +11,9 @@ import java.util.List;
 
 public interface PlaceService {
 
-    List<PlaceDTO> findAllAccepted();
+    List<PlaceDTO> findAll();
 
-    List<PlaceDTO> findAllNotAccepted();
+    List<PlaceDTO> findAllAcceptedAndActive();
 
     MessageDTO newPlace(PlaceEntity placeEntity, String language, HttpHeaders httpHeaders) throws AuthenticationException;
 

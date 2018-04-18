@@ -24,8 +24,8 @@ public class PlaceController {
     }
 
     @GetMapping (value = "/place/all")
-    public ResponseEntity findAll(){
-        return new ResponseEntity<>(placeService.findAllAccepted(), HttpStatus.OK);
+    public ResponseEntity findAllAcceptedAndActive(){
+        return new ResponseEntity<>(placeService.findAllAcceptedAndActive(), HttpStatus.OK);
     }
 
     @GetMapping (value = "/place/{placeId}/{language}")
@@ -58,9 +58,9 @@ public class PlaceController {
         }
     }
 
-    @GetMapping (value = "admin/place/allNotAccepted")
-    public ResponseEntity findAllNotAccepted(){
-        return new ResponseEntity<>(placeService.findAllNotAccepted(), HttpStatus.OK);
+    @GetMapping (value = "admin/place/all")
+    public ResponseEntity findAll(){
+        return new ResponseEntity<>(placeService.findAll(), HttpStatus.OK);
     }
 
     @PutMapping(value = "/admin/place/edit/{language}")

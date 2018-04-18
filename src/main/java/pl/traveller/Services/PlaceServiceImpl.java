@@ -38,8 +38,8 @@ public class PlaceServiceImpl implements PlaceService {
         this.authenticationService = authenticationService;
     }
 
-    private List<PlaceDTO> findAll(boolean accepted) {
-        List<PlaceEntity> placeEntities = placeRepository.findAllByAccepted(accepted);
+    public List<PlaceDTO> findAll() {
+        List<PlaceEntity> placeEntities = placeRepository.findAll();
         List<PlaceDTO> placeDTOS = new ArrayList<>(placeEntities.size());
 
         for (PlaceEntity placeEntity : placeEntities) {
@@ -58,13 +58,23 @@ public class PlaceServiceImpl implements PlaceService {
     }
 
     @Override
-    public List<PlaceDTO> findAllAccepted() {
-        return findAll(true);
-    }
+    public List<PlaceDTO> findAllAcceptedAndActive() {
+        List<PlaceEntity> placeEntities = placeRepository.findAllByAcceptedAndActive(true, true);
+        List<PlaceDTO> placeDTOS = new ArrayList<>(placeEntities.size());
 
-    @Override
-    public List<PlaceDTO> findAllNotAccepted() {
-        return findAll(false);
+        for (PlaceEntity placeEntity : placeEntities) {
+            placeDTOS.add(new PlaceDTO(
+                    placeEntity.getId(),
+                    placeEntity.getName(),
+                    placeEntity.getAddress(),
+                    placeEntity.getGps(),
+                    placeEntity.getDescription(),
+                    placeEntity.isAccepted(),
+                    placeEntity.isActive(),
+                    placeEntity.getUserId()
+            ));
+        }
+        return placeDTOS;
     }
 
     @Override
