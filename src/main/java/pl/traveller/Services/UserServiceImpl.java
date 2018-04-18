@@ -73,14 +73,19 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public MessageDTO register(UserEntity userEntity, String language) {
-        if (userRepository.findByUsername(userEntity.getUsername()) != null) {
-            return new MessageDTO(errorMessagesService.getErrorMessage(language, "usernameTaken"));
-        } else {
-            userEntity.setPassword(BCrypt.hashpw(userEntity.getPassword(), BCrypt.gensalt()));
-            userEntity.setActive(true);
-            userRepository.save(userEntity);
-            return null;
+    public MessageDTO register(UserEntity userEntity, String language) throws AuthenticationException {
+        if(!isAdmin(userEntity)) {
+            if (userRepository.findByUsername(userEntity.getUsername()) != null) {
+                return new MessageDTO(errorMessagesService.getErrorMessage(language, "usernameTaken"));
+            } else {
+                userEntity.setPassword(BCrypt.hashpw(userEntity.getPassword(), BCrypt.gensalt()));
+                userEntity.setActive(true);
+                userRepository.save(userEntity);
+                return null;
+            }
+        }
+        else{
+            throw new AuthenticationException();
         }
     }
 

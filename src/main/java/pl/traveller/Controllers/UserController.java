@@ -27,15 +27,15 @@ public class UserController {
 
     @PostMapping(value = "/user/register/{language}")
     public ResponseEntity register(@RequestBody UserEntity userEntity, @PathVariable String language) {
-        if (userService.isAdmin(userEntity)) {
-            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
-        } else {
+        try {
             MessageDTO messageDTO = userService.register(userEntity, language);
             if (messageDTO == null) {
                 return new ResponseEntity<>(HttpStatus.OK);
             } else {
                 return new ResponseEntity<>(messageDTO, HttpStatus.CONFLICT);
             }
+        }catch(AuthenticationException e){
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
     }
 

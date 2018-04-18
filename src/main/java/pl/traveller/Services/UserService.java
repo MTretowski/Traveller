@@ -19,7 +19,7 @@ public interface UserService {
 
     String getUserIdByUsername(String username);
 
-    MessageDTO register(UserEntity userEntity, String language);
+    MessageDTO register(UserEntity userEntity, String language) throws AuthenticationException;
 
     MessageDTO deactivateAccount(long userId, String language, HttpHeaders httpHeaders) throws AuthenticationException;
 
