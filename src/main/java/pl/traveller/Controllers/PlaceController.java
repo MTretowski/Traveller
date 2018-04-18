@@ -67,18 +67,18 @@ public class PlaceController {
     public ResponseEntity editPlace(@RequestBody PlaceEntity placeEntity, @PathVariable String language){
         MessageDTO messageDTO = placeService.edit(placeEntity, language);
         if(messageDTO == null){
-            return new ResponseEntity<>(HttpStatus.OK);
+            return new ResponseEntity<>(placeService.findAll(), HttpStatus.OK);
         }
         else{
             return new ResponseEntity<>(messageDTO, HttpStatus.CONFLICT);
         }
     }
 
-    @PutMapping(value = "/admin/place/accept/{id}/{language}")
-    public ResponseEntity acceptPlace(@PathVariable long id, @PathVariable String language){
-        MessageDTO messageDTO = placeService.accept(id, language);
+    @PutMapping(value = "/admin/place/accept/{placeId}/{language}")
+    public ResponseEntity acceptPlace(@PathVariable long placeId, @PathVariable String language){
+        MessageDTO messageDTO = placeService.accept(placeId, language);
         if(messageDTO == null){
-            return new ResponseEntity<>(HttpStatus.OK);
+            return new ResponseEntity<>(placeService.findAll(), HttpStatus.OK);
         }
         else{
             return new ResponseEntity<>(messageDTO, HttpStatus.CONFLICT);
