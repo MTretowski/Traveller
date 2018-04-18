@@ -7,7 +7,6 @@ import pl.traveller.DTOs.VisitDateDTO;
 import pl.traveller.Entities.VisitEntity;
 
 import javax.security.sasl.AuthenticationException;
-import java.sql.Timestamp;
 import java.util.List;
 
 public interface VisitService {

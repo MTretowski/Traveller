@@ -35,6 +35,7 @@ public class TokenAuthenticationService {
                 .compact();
         res.addHeader(HEADER_STRING, JWT);
         res.addHeader("UserId", userService.getUserIdByUsername(username));
+        res.addHeader("Admin", userService.isAdminToString(username));
     }
 
     static Authentication getAuthentication(HttpServletRequest request, UserServiceImpl userService) {

@@ -43,6 +43,16 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public String isAdminToString(String username){
+        if(isAdmin(username)){
+            return "true";
+        }
+        else{
+            return "false";
+        }
+    }
+
+    @Override
     public List<UserDTO> findAll() {
         List<UserEntity> userEntities = userRepository.findAll();
         List<UserDTO> userDTOS = new ArrayList<>();

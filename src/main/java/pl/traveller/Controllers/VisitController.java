@@ -12,7 +12,6 @@ import pl.traveller.Entities.VisitEntity;
 import pl.traveller.Services.VisitServiceImpl;
 
 import javax.security.sasl.AuthenticationException;
-import java.util.Date;
 
 @Controller
 public class VisitController {
