@@ -78,7 +78,7 @@ public class VisitServiceImpl implements VisitService {
     }
 
     @Override
-    public List<VisitDTO> clearHistory(long userId, HttpHeaders httpHeaders) throws AuthenticationException {
+    public void clearHistory(long userId, HttpHeaders httpHeaders) throws AuthenticationException {
         if (authenticationService.authenticate(httpHeaders, userId)) {
             List<VisitEntity> visitEntities = visitRepository.findAllByUserIdAndVisitedAndVisible(userId, true, true);
             if (visitEntities.size() > 0) {
@@ -87,7 +87,6 @@ public class VisitServiceImpl implements VisitService {
                     visitRepository.save(visitEntity);
                 }
             }
-            return findMyVisitedPlaces(userId);
         } else {
             throw new AuthenticationException();
         }
@@ -187,7 +186,7 @@ public class VisitServiceImpl implements VisitService {
                     throw new AuthenticationException();
                 }
             } else {
-                return new MessageDTO(errorMessagesService.getErrorMessage(language, "placeNotFound"));
+                return new MessageDTO(errorMessagesService.getErrorMessage(language, "visitNotFound"));
             }
         } else {
             throw new AuthenticationException();

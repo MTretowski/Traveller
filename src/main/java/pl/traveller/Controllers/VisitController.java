@@ -46,7 +46,7 @@ public class VisitController {
         try {
             MessageDTO messageDTO = visitService.newVisit(visitEntity, language, httpHeaders);
             if (messageDTO == null) {
-                return new ResponseEntity<>(HttpStatus.OK);
+                return new ResponseEntity<>(visitService.findMyNotVisitedPlaces(visitEntity.getUserId()),HttpStatus.OK);
             } else {
                 return new ResponseEntity<>(messageDTO, HttpStatus.CONFLICT);
             }
@@ -86,7 +86,8 @@ public class VisitController {
     @PutMapping(value = "/visit/clearHistory/{userId}")
     public ResponseEntity clearHistory(@PathVariable long userId, @RequestHeader HttpHeaders httpHeaders) {
         try {
-            return new ResponseEntity<>(visitService.clearHistory(userId, httpHeaders), HttpStatus.OK);
+            visitService.clearHistory(userId, httpHeaders);
+            return new ResponseEntity<>(visitService.findMyVisitedPlaces(userId), HttpStatus.OK);
         } catch (AuthenticationException e) {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }

@@ -19,7 +19,7 @@ public interface VisitService {
 
     List<VisitDTO> findMyNotVisitedPlaces(long userId);
 
-    List<VisitDTO> clearHistory(long userId, HttpHeaders httpHeaders) throws AuthenticationException;
+    void clearHistory(long userId, HttpHeaders httpHeaders) throws AuthenticationException;
 
     MessageDTO hideVisitedPlace(long visitId, long userId, String language, HttpHeaders httpHeaders) throws AuthenticationException;
 
