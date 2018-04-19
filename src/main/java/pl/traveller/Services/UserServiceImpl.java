@@ -74,6 +74,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public MessageDTO register(UserEntity userEntity, String language) throws AuthenticationException {
+        if(userEntity.getUserRoleId() == 0){
+            userEntity.setUserRoleId(2);
+        }
         if(!isAdmin(userEntity)) {
             if (userRepository.findByUsername(userEntity.getUsername()) != null) {
                 return new MessageDTO(errorMessagesService.getErrorMessage(language, "usernameTaken"));
