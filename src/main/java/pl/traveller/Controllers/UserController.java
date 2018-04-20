@@ -25,6 +25,11 @@ public class UserController {
         this.userService = userService;
     }
 
+    @RequestMapping(value="/user/login", method=RequestMethod.OPTIONS)
+    public ResponseEntity getOptions() {
+        return new ResponseEntity(HttpStatus.OK);
+    }
+
     @PostMapping(value = "/user/register/{language}")
     public ResponseEntity register(@RequestBody UserEntity userEntity, @PathVariable String language) {
         try {
