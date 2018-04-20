@@ -26,6 +26,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     public WebSecurityConfig(UserDetailsService userDetailsService, UserServiceImpl userService) {
         this.userDetailsService = userDetailsService;
         this.userService = userService;
+
     }
 
     @Override
@@ -37,7 +38,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .anyRequest().authenticated()
                 .and()
                 .addFilterBefore(new JWTLoginFilter("/user/login", authenticationManager(), userService), UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(new JWTAuthenticationFilter(userService), UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(new JWTAuthenticationFilter(userService), UsernamePasswordAuthenticationFilter.class)
+                .exceptionHandling().authenticationEntryPoint(new CustomAuthenticationEntryPoint());
     }
 
     @Override
