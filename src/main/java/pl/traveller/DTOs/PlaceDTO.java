@@ -19,4 +19,5 @@ public class PlaceDTO {
     private boolean accepted;
     private boolean active;
     private long userId;
+    private String username;
 }

@@ -9,6 +9,7 @@ import pl.traveller.DTOs.MessageDTO;
 import pl.traveller.DTOs.PlaceDTO;
 import pl.traveller.Entities.CommentEntity;
 import pl.traveller.Entities.PlaceEntity;
+import pl.traveller.Entities.UserEntity;
 import pl.traveller.Entities.VisitEntity;
 import pl.traveller.Repositories.PlaceRepository;
 import pl.traveller.Repositories.UserRepository;
@@ -41,8 +42,16 @@ public class PlaceServiceImpl implements PlaceService {
     public List<PlaceDTO> findAll() {
         List<PlaceEntity> placeEntities = placeRepository.findAll();
         List<PlaceDTO> placeDTOS = new ArrayList<>(placeEntities.size());
-
+        UserEntity userEntity;
+        String username;
         for (PlaceEntity placeEntity : placeEntities) {
+            userEntity = userRepository.findById(placeEntity.getUserId());
+            if(userEntity == null){
+                username = "-";
+            }
+            else{
+                username = userEntity.getUsername();
+            }
             placeDTOS.add(new PlaceDTO(
                     placeEntity.getId(),
                     placeEntity.getName(),
@@ -51,7 +60,8 @@ public class PlaceServiceImpl implements PlaceService {
                     placeEntity.getDescription(),
                     placeEntity.isAccepted(),
                     placeEntity.isActive(),
-                    placeEntity.getUserId()
+                    placeEntity.getUserId(),
+                    username
             ));
         }
         return placeDTOS;
@@ -61,8 +71,16 @@ public class PlaceServiceImpl implements PlaceService {
     public List<PlaceDTO> findAllAcceptedAndActive() {
         List<PlaceEntity> placeEntities = placeRepository.findAllByAcceptedAndActive(true, true);
         List<PlaceDTO> placeDTOS = new ArrayList<>(placeEntities.size());
-
+        UserEntity userEntity;
+        String username;
         for (PlaceEntity placeEntity : placeEntities) {
+            userEntity = userRepository.findById(placeEntity.getUserId());
+            if(userEntity == null){
+                username = "-";
+            }
+            else{
+                username = userEntity.getUsername();
+            }
             placeDTOS.add(new PlaceDTO(
                     placeEntity.getId(),
                     placeEntity.getName(),
@@ -71,7 +89,8 @@ public class PlaceServiceImpl implements PlaceService {
                     placeEntity.getDescription(),
                     placeEntity.isAccepted(),
                     placeEntity.isActive(),
-                    placeEntity.getUserId()
+                    placeEntity.getUserId(),
+                    username
             ));
         }
         return placeDTOS;
@@ -137,6 +156,15 @@ public class PlaceServiceImpl implements PlaceService {
     public PlaceDTO findById(long id) {
         PlaceEntity placeEntity = placeRepository.findById(id);
         if (placeEntity != null) {
+            UserEntity userEntity = userRepository.findById(placeEntity.getUserId());
+            String username;
+            if(userEntity == null){
+                username = "-";
+            }
+            else{
+                username = userEntity.getUsername();
+            }
+
             return new PlaceDTO(
                     placeEntity.getId(),
                     placeEntity.getName(),
@@ -145,7 +173,8 @@ public class PlaceServiceImpl implements PlaceService {
                     placeEntity.getDescription(),
                     placeEntity.isAccepted(),
                     placeEntity.isActive(),
-                    placeEntity.getUserId());
+                    placeEntity.getUserId(),
+                    username);
         } else {
             return null;
         }
@@ -161,15 +190,25 @@ public class PlaceServiceImpl implements PlaceService {
         List<VisitEntity> visitEntities = visitService.findAllByPlaceId(placeId);
         List<CommentDTO> commentDTOS = new ArrayList<>();
         CommentEntity commentEntity;
+        UserEntity userEntity;
+        String username;
 
         for (VisitEntity visitEntity : visitEntities) {
             commentEntity = null;
             commentEntity = commentService.findByVisitId(visitEntity.getId());
             if(commentEntity != null) {
+                userEntity = userRepository.findById(visitEntity.getUserId());
+                if(userEntity == null){
+                    username = "-";
+                }
+                else{
+                    username = userEntity.getUsername();
+                }
                 commentDTOS.add(new CommentDTO(
                         commentEntity.getText(),
                         commentEntity.isRecommended(),
-                        visitEntity.getDate()
+                        visitEntity.getDate(),
+                        username
                 ));
             }
         }
