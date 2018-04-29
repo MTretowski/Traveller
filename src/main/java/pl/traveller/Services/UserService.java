@@ -32,4 +32,6 @@ public interface UserService {
     List<UserRoleDTO> findAllRoles();
 
     boolean isActive(String username);
+
+    UserDTO getUserDetails(long userId, HttpHeaders httpHeaders) throws AuthenticationException;
 }

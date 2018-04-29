@@ -182,4 +182,24 @@ public class UserServiceImpl implements UserService {
         return userEntity != null && userEntity.isActive();
     }
 
+    @Override
+    public UserDTO getUserDetails(long userId, HttpHeaders httpHeaders) throws AuthenticationException {
+        if (authorizationService.authenticate(httpHeaders, userId)) {
+            UserEntity userEntity = userRepository.findById(userId);
+            if(userEntity == null){
+                throw new AuthenticationException();
+            }
+            else{
+                return new UserDTO(
+                        userEntity.getId(),
+                        userEntity.getUsername(),
+                        userEntity.isActive(),
+                        userEntity.getUserRoleId()
+                );
+            }
+        } else {
+            throw new AuthenticationException();
+        }
+    }
+
 }

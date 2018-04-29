@@ -30,6 +30,16 @@ public class UserController {
         return new ResponseEntity(HttpStatus.OK);
     }
 
+    @GetMapping(value = "/user/details/{userId}")
+    public ResponseEntity getUserDetails(@PathVariable long userId, @RequestHeader HttpHeaders httpHeaders){
+        try{
+            return new ResponseEntity<>(userService.getUserDetails(userId, httpHeaders), HttpStatus.OK);
+        }
+        catch(AuthenticationException e){
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
+    }
+
     @PostMapping(value = "/user/register/{language}")
     public ResponseEntity register(@RequestBody UserEntity userEntity, @PathVariable String language) {
         try {
