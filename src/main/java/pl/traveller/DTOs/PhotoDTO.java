@@ -18,4 +18,5 @@ public class PhotoDTO {
     private boolean accepted;
     private long userId;
     private long placeId;
+    private String username;
 }

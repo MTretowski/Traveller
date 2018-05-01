@@ -2,6 +2,7 @@ package pl.traveller.Services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pl.traveller.DTOs.MessageDTO;
@@ -10,8 +11,10 @@ import pl.traveller.DTOs.PhotoDTO;
 import pl.traveller.DTOs.PhotoFileDTO;
 import pl.traveller.Entities.PhotoEntity;
 import pl.traveller.Entities.PhotoFileEntity;
+import pl.traveller.Entities.UserEntity;
 import pl.traveller.Repositories.PhotoFileRepository;
 import pl.traveller.Repositories.PhotoRepository;
+import pl.traveller.Repositories.UserRepository;
 
 import javax.security.sasl.AuthenticationException;
 import java.sql.Timestamp;
@@ -26,26 +29,38 @@ public class PhotoServiceImpl implements PhotoService {
     private PhotoFileRepository photoFileRepository;
     private ErrorMessagesServiceImpl errorMessagesService;
     private AuthenticationServiceImpl authenticationService;
+    private UserRepository userRepository;
 
     @Autowired
-    public PhotoServiceImpl(PhotoRepository photoRepository, PhotoFileRepository photoFileRepository, ErrorMessagesServiceImpl errorMessagesService, AuthenticationServiceImpl authenticationService) {
+    public PhotoServiceImpl(PhotoRepository photoRepository, PhotoFileRepository photoFileRepository, ErrorMessagesServiceImpl errorMessagesService, AuthenticationServiceImpl authenticationService, UserRepository userRepository) {
         this.photoRepository = photoRepository;
         this.photoFileRepository = photoFileRepository;
         this.errorMessagesService = errorMessagesService;
         this.authenticationService = authenticationService;
+        this.userRepository = userRepository;
     }
 
     @Override
     public List<PhotoDTO> findAllNotAccepted() {
         List<PhotoEntity> photoEntities = photoRepository.findAllByAccepted(false);
         List<PhotoDTO> photoDTOS = new ArrayList<>();
+        UserEntity userEntity;
+        String username;
         for (PhotoEntity photoEntity : photoEntities) {
+            userEntity = userRepository.findById(photoEntity.getUserId());
+            if(userEntity == null){
+                username = "-";
+            }
+            else{
+                username = userEntity.getUsername();
+            }
             photoDTOS.add(new PhotoDTO(
                     photoEntity.getId(),
                     photoEntity.getDate(),
                     photoEntity.isAccepted(),
                     photoEntity.getUserId(),
-                    photoEntity.getPlaceId()
+                    photoEntity.getPlaceId(),
+                    username
             ));
         }
         return photoDTOS;
@@ -67,13 +82,23 @@ public class PhotoServiceImpl implements PhotoService {
     public List<PhotoDTO> findAllByPlaceId(long placeId) {
         List<PhotoEntity> photoEntities = photoRepository.findAllByPlaceIdAndAccepted(placeId, true);
         List<PhotoDTO> photoDTOS = new ArrayList<>();
+        UserEntity userEntity;
+        String username;
         for (PhotoEntity photoEntity : photoEntities) {
+            userEntity = userRepository.findById(photoEntity.getUserId());
+            if(userEntity == null){
+                username = "-";
+            }
+            else{
+                username = userEntity.getUsername();
+            }
             photoDTOS.add(new PhotoDTO(
                     photoEntity.getId(),
                     photoEntity.getDate(),
                     photoEntity.isAccepted(),
                     photoEntity.getUserId(),
-                    photoEntity.getPlaceId()
+                    photoEntity.getPlaceId(),
+                    username
             ));
         }
         return photoDTOS;
