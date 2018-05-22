@@ -1,24 +1,17 @@
 <?xml version='1.0' encoding='utf-8'?>
 <!DOCTYPE hibernate-configuration PUBLIC
-    "-//Hibernate/Hibernate Configuration DTD//EN"
-    "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
+        "-//Hibernate/Hibernate Configuration DTD//EN"
+        "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
 <hibernate-configuration>
-  <session-factory>
-
-    <property name="connection.url">jdbc:mysql://localhost:3306/logsta1_TIM</property>
-
-    <property name="connection.driver_class">com.mysql.jdbc.Driver</property>
-      <mapping class="pl.traveller.Entities.CommentEntity"/>
-    <mapping class="pl.traveller.Entities.PhotoEntity"/>
-    <mapping class="pl.traveller.Entities.PlaceEntity"/>
-    <mapping class="pl.traveller.Entities.UserEntity"/>
-    <mapping class="pl.traveller.Entities.VisitEntity"/>
-    <mapping class="pl.traveller.Entities.UserRoleEntity"/>
-      <mapping class="pl.traveller.Entities.PhotoFileEntity"/>
-      <!-- <property name="connection.username"/> -->
-    <!-- <property name="connection.password"/> -->
-
-    <!-- DB schema will be updated if needed -->
-    <!-- <property name="hbm2ddl.auto">update</property> -->
-  </session-factory>
+    <session-factory>
+        <property name="connection.url">jdbc:mysql://localhost:3306/tim</property>
+        <property name="connection.driver_class">com.mysql.jdbc.Driver</property>
+        <mapping class="pl.traveller.Entities.CommentEntity"/>
+        <mapping class="pl.traveller.Entities.PhotoEntity"/>
+        <mapping class="pl.traveller.Entities.PhotoFileEntity"/>
+        <mapping class="pl.traveller.Entities.PlaceEntity"/>
+        <mapping class="pl.traveller.Entities.UserEntity"/>
+        <mapping class="pl.traveller.Entities.UserRoleEntity"/>
+        <mapping class="pl.traveller.Entities.VisitEntity"/>
+    </session-factory>
 </hibernate-configuration>

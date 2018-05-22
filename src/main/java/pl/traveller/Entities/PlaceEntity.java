@@ -2,9 +2,10 @@ package pl.traveller.Entities;
 
 import javax.persistence.*;
 import java.util.Collection;
+import java.util.Objects;
 
 @Entity
-@Table(name = "place", schema = "logsta1_TIM")
+@Table(name = "place", schema = "tim", catalog = "")
 public class PlaceEntity {
     private long id;
     private String name;
@@ -19,8 +20,7 @@ public class PlaceEntity {
     private Collection<VisitEntity> visitsById;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
+    @Column(name = "id", nullable = false)
     public long getId() {
         return id;
     }
@@ -30,7 +30,7 @@ public class PlaceEntity {
     }
 
     @Basic
-    @Column(name = "name")
+    @Column(name = "name", nullable = false, length = 200)
     public String getName() {
         return name;
     }
@@ -40,7 +40,7 @@ public class PlaceEntity {
     }
 
     @Basic
-    @Column(name = "address")
+    @Column(name = "address", nullable = false, length = 254)
     public String getAddress() {
         return address;
     }
@@ -50,7 +50,7 @@ public class PlaceEntity {
     }
 
     @Basic
-    @Column(name = "gps")
+    @Column(name = "gps", nullable = false, length = 254)
     public String getGps() {
         return gps;
     }
@@ -60,7 +60,7 @@ public class PlaceEntity {
     }
 
     @Basic
-    @Column(name = "description")
+    @Column(name = "description", nullable = true, length = 254)
     public String getDescription() {
         return description;
     }
@@ -70,7 +70,7 @@ public class PlaceEntity {
     }
 
     @Basic
-    @Column(name = "accepted")
+    @Column(name = "accepted", nullable = false)
     public boolean isAccepted() {
         return accepted;
     }
@@ -80,7 +80,7 @@ public class PlaceEntity {
     }
 
     @Basic
-    @Column(name = "active")
+    @Column(name = "active", nullable = false)
     public boolean isActive() {
         return active;
     }
@@ -90,13 +90,34 @@ public class PlaceEntity {
     }
 
     @Basic
-    @Column(name = "user_id")
+    @Column(name = "user_id", nullable = false)
     public long getUserId() {
         return userId;
     }
 
     public void setUserId(long userId) {
         this.userId = userId;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        PlaceEntity that = (PlaceEntity) o;
+        return id == that.id &&
+                accepted == that.accepted &&
+                active == that.active &&
+                userId == that.userId &&
+                Objects.equals(name, that.name) &&
+                Objects.equals(address, that.address) &&
+                Objects.equals(gps, that.gps) &&
+                Objects.equals(description, that.description);
+    }
+
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(id, name, address, gps, description, accepted, active, userId);
     }
 
     @OneToMany(mappedBy = "placeByPlaceId")
@@ -109,7 +130,7 @@ public class PlaceEntity {
     }
 
     @ManyToOne
-    @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false, updatable = false, insertable = false)
+    @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false, insertable = false, updatable = false)
     public UserEntity getUserByUserId() {
         return userByUserId;
     }

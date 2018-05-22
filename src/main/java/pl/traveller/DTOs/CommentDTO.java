@@ -16,5 +16,6 @@ public class CommentDTO {
     private String text;
     private boolean recommended;
     private Timestamp visitDate;
+    private boolean active;
     private String username;
 }

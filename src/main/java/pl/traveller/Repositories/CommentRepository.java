@@ -8,4 +8,8 @@ import pl.traveller.Entities.CommentEntity;
 public interface CommentRepository extends CrudRepository<CommentEntity, Integer> {
 
     CommentEntity findByVisitId(long visitId);
+
+    CommentEntity findByVisitIdAndActive(long visitId, boolean active);
+
+    void deleteById(long id);
 }

@@ -1,19 +1,20 @@
 package pl.traveller.Entities;
 
 import javax.persistence.*;
+import java.util.Objects;
 
 @Entity
-@Table(name = "comment", schema = "logsta1_TIM")
+@Table(name = "comment", schema = "tim", catalog = "")
 public class CommentEntity {
     private long id;
     private String text;
     private boolean recommended;
+    private boolean active;
     private long visitId;
     private VisitEntity visitByVisitId;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
+    @Column(name = "id", nullable = false)
     public long getId() {
         return id;
     }
@@ -23,7 +24,7 @@ public class CommentEntity {
     }
 
     @Basic
-    @Column(name = "text")
+    @Column(name = "text", nullable = false, length = 254)
     public String getText() {
         return text;
     }
@@ -33,7 +34,7 @@ public class CommentEntity {
     }
 
     @Basic
-    @Column(name = "recommended")
+    @Column(name = "recommended", nullable = false)
     public boolean isRecommended() {
         return recommended;
     }
@@ -43,7 +44,17 @@ public class CommentEntity {
     }
 
     @Basic
-    @Column(name = "visit_id")
+    @Column(name = "active", nullable = false)
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+
+    @Basic
+    @Column(name = "visit_id", nullable = false)
     public long getVisitId() {
         return visitId;
     }
@@ -52,8 +63,26 @@ public class CommentEntity {
         this.visitId = visitId;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        CommentEntity that = (CommentEntity) o;
+        return id == that.id &&
+                recommended == that.recommended &&
+                active == that.active &&
+                visitId == that.visitId &&
+                Objects.equals(text, that.text);
+    }
+
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(id, text, recommended, active, visitId);
+    }
+
     @ManyToOne
-    @JoinColumn(name = "visit_id", referencedColumnName = "id", nullable = false, updatable = false, insertable = false)
+    @JoinColumn(name = "visit_id", referencedColumnName = "id", nullable = false, insertable = false, updatable = false)
     public VisitEntity getVisitByVisitId() {
         return visitByVisitId;
     }

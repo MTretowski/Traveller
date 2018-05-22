@@ -192,7 +192,7 @@ public class PlaceServiceImpl implements PlaceService {
 
         for (VisitEntity visitEntity : visitEntities) {
             commentEntity = null;
-            commentEntity = commentService.findByVisitId(visitEntity.getId());
+            commentEntity = commentService.findActiveByVisitId(visitEntity.getId());
             if (commentEntity != null) {
                 userEntity = userRepository.findById(visitEntity.getUserId());
                 if (userEntity == null) {
@@ -204,6 +204,7 @@ public class PlaceServiceImpl implements PlaceService {
                         commentEntity.getText(),
                         commentEntity.isRecommended(),
                         visitEntity.getDate(),
+                        commentEntity.isActive(),
                         username
                 ));
             }

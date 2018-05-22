@@ -2,9 +2,10 @@ package pl.traveller.Entities;
 
 import javax.persistence.*;
 import java.util.Collection;
+import java.util.Objects;
 
 @Entity
-@Table(name = "user", schema = "logsta1_TIM")
+@Table(name = "user", schema = "tim", catalog = "")
 public class UserEntity {
     private long id;
     private String username;
@@ -17,8 +18,7 @@ public class UserEntity {
     private Collection<VisitEntity> visitsById;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
+    @Column(name = "id", nullable = false)
     public long getId() {
         return id;
     }
@@ -28,7 +28,7 @@ public class UserEntity {
     }
 
     @Basic
-    @Column(name = "username")
+    @Column(name = "username", nullable = false, length = 100)
     public String getUsername() {
         return username;
     }
@@ -38,7 +38,7 @@ public class UserEntity {
     }
 
     @Basic
-    @Column(name = "password")
+    @Column(name = "password", nullable = false, length = 100)
     public String getPassword() {
         return password;
     }
@@ -48,7 +48,7 @@ public class UserEntity {
     }
 
     @Basic
-    @Column(name = "active")
+    @Column(name = "active", nullable = false)
     public boolean isActive() {
         return active;
     }
@@ -58,13 +58,31 @@ public class UserEntity {
     }
 
     @Basic
-    @Column(name = "user_role_id")
+    @Column(name = "user_role_id", nullable = false)
     public long getUserRoleId() {
         return userRoleId;
     }
 
     public void setUserRoleId(long userRoleId) {
         this.userRoleId = userRoleId;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        UserEntity that = (UserEntity) o;
+        return id == that.id &&
+                active == that.active &&
+                userRoleId == that.userRoleId &&
+                Objects.equals(username, that.username) &&
+                Objects.equals(password, that.password);
+    }
+
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(id, username, password, active, userRoleId);
     }
 
     @OneToMany(mappedBy = "userByUserId")
@@ -86,7 +104,7 @@ public class UserEntity {
     }
 
     @ManyToOne
-    @JoinColumn(name = "user_role_id", referencedColumnName = "id", nullable = false, updatable = false, insertable = false)
+    @JoinColumn(name = "user_role_id", referencedColumnName = "id", nullable = false, insertable = false, updatable = false)
     public UserRoleEntity getUserRoleByUserRoleId() {
         return userRoleByUserRoleId;
     }

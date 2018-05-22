@@ -2,10 +2,10 @@ package pl.traveller.Entities;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
-import java.util.Arrays;
+import java.util.Objects;
 
 @Entity
-@Table(name = "photo", schema = "logsta1_tim")
+@Table(name = "photo", schema = "tim", catalog = "")
 public class PhotoEntity {
     private long id;
     private Timestamp date;
@@ -18,7 +18,7 @@ public class PhotoEntity {
     private PhotoFileEntity photoFileByPhotoFileId;
 
     @Id
-    @Column(name = "id")
+    @Column(name = "id", nullable = false)
     public long getId() {
         return id;
     }
@@ -28,7 +28,7 @@ public class PhotoEntity {
     }
 
     @Basic
-    @Column(name = "date")
+    @Column(name = "date", nullable = false)
     public Timestamp getDate() {
         return date;
     }
@@ -38,7 +38,7 @@ public class PhotoEntity {
     }
 
     @Basic
-    @Column(name = "accepted")
+    @Column(name = "accepted", nullable = false)
     public boolean isAccepted() {
         return accepted;
     }
@@ -48,7 +48,7 @@ public class PhotoEntity {
     }
 
     @Basic
-    @Column(name = "user_id")
+    @Column(name = "user_id", nullable = false)
     public long getUserId() {
         return userId;
     }
@@ -58,7 +58,7 @@ public class PhotoEntity {
     }
 
     @Basic
-    @Column(name = "place_id")
+    @Column(name = "place_id", nullable = false)
     public long getPlaceId() {
         return placeId;
     }
@@ -68,7 +68,7 @@ public class PhotoEntity {
     }
 
     @Basic
-    @Column(name = "photo_file_id")
+    @Column(name = "photo_file_id", nullable = false)
     public long getPhotoFileId() {
         return photoFileId;
     }
@@ -77,8 +77,27 @@ public class PhotoEntity {
         this.photoFileId = photoFileId;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        PhotoEntity that = (PhotoEntity) o;
+        return id == that.id &&
+                accepted == that.accepted &&
+                userId == that.userId &&
+                placeId == that.placeId &&
+                photoFileId == that.photoFileId &&
+                Objects.equals(date, that.date);
+    }
+
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(id, date, accepted, userId, placeId, photoFileId);
+    }
+
     @ManyToOne
-    @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false, updatable = false, insertable = false)
+    @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false, insertable = false, updatable = false)
     public UserEntity getUserByUserId() {
         return userByUserId;
     }
@@ -88,7 +107,7 @@ public class PhotoEntity {
     }
 
     @ManyToOne
-    @JoinColumn(name = "place_id", referencedColumnName = "id", nullable = false, updatable = false, insertable = false)
+    @JoinColumn(name = "place_id", referencedColumnName = "id", nullable = false, insertable = false, updatable = false)
     public PlaceEntity getPlaceByPlaceId() {
         return placeByPlaceId;
     }
@@ -98,7 +117,7 @@ public class PhotoEntity {
     }
 
     @ManyToOne
-    @JoinColumn(name = "photo_file_id", referencedColumnName = "id", nullable = false, updatable = false, insertable = false)
+    @JoinColumn(name = "photo_file_id", referencedColumnName = "id", nullable = false, insertable = false, updatable = false)
     public PhotoFileEntity getPhotoFileByPhotoFileId() {
         return photoFileByPhotoFileId;
     }

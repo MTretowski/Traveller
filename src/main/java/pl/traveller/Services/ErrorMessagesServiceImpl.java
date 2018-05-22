@@ -8,8 +8,8 @@ import java.util.HashMap;
 @Service
 public class ErrorMessagesServiceImpl implements ErrorMessagesService {
 
-    private HashMap<String, String> messagesPl = new HashMap<>();
-    private HashMap<String, String> messagesEn = new HashMap<>();
+    private HashMap<String, String> messagesPl;
+    private HashMap<String, String> messagesEn;
 
     ErrorMessagesServiceImpl() {
         messagesEn = getMessages("/messages_en.csv");

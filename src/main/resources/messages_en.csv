@@ -11,3 +11,4 @@ placeAlreadyVisitedCannotDelete;Visit has been already marked as made. Is unable
 dateFromTheFuture;The entered date comes from the future.
 visitNotMade;Visit has not been already marked as made.
 photoNotFound;The photo with the given ID was not found in database;
+commentNotFound;This visit has not been commented

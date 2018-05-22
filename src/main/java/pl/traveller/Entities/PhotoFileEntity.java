@@ -3,17 +3,17 @@ package pl.traveller.Entities;
 import javax.persistence.*;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Objects;
 
 @Entity
-@Table(name = "photo_file", schema = "logsta1_TIM")
+@Table(name = "photo_file", schema = "tim", catalog = "")
 public class PhotoFileEntity {
     private long id;
     private byte[] file;
-    private Collection<PhotoEntity> photoFilesById;
+    private Collection<PhotoEntity> photosById;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
+    @Column(name = "id", nullable = false)
     public long getId() {
         return id;
     }
@@ -23,7 +23,7 @@ public class PhotoFileEntity {
     }
 
     @Basic
-    @Column(name = "file")
+    @Column(name = "file", nullable = false)
     public byte[] getFile() {
         return file;
     }
@@ -32,12 +32,29 @@ public class PhotoFileEntity {
         this.file = file;
     }
 
-    @OneToMany(mappedBy = "photoFileByPhotoFileId")
-    public Collection<PhotoEntity> getPhotoFilesById() {
-        return photoFilesById;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        PhotoFileEntity that = (PhotoFileEntity) o;
+        return id == that.id &&
+                Arrays.equals(file, that.file);
     }
 
-    public void setPhotoFilesById(Collection<PhotoEntity> photoFilesById) {
-        this.photoFilesById = photoFilesById;
+    @Override
+    public int hashCode() {
+
+        int result = Objects.hash(id);
+        result = 31 * result + Arrays.hashCode(file);
+        return result;
+    }
+
+    @OneToMany(mappedBy = "photoFileByPhotoFileId")
+    public Collection<PhotoEntity> getPhotosById() {
+        return photosById;
+    }
+
+    public void setPhotosById(Collection<PhotoEntity> photosById) {
+        this.photosById = photosById;
     }
 }

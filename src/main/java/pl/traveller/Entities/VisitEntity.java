@@ -3,9 +3,10 @@ package pl.traveller.Entities;
 import javax.persistence.*;
 import java.sql.Timestamp;
 import java.util.Collection;
+import java.util.Objects;
 
 @Entity
-@Table(name = "visit", schema = "logsta1_TIM")
+@Table(name = "visit", schema = "tim", catalog = "")
 public class VisitEntity {
     private long id;
     private Timestamp date;
@@ -18,8 +19,7 @@ public class VisitEntity {
     private PlaceEntity placeByPlaceId;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
+    @Column(name = "id", nullable = false)
     public long getId() {
         return id;
     }
@@ -29,7 +29,7 @@ public class VisitEntity {
     }
 
     @Basic
-    @Column(name = "date")
+    @Column(name = "date", nullable = true)
     public Timestamp getDate() {
         return date;
     }
@@ -39,7 +39,7 @@ public class VisitEntity {
     }
 
     @Basic
-    @Column(name = "visited")
+    @Column(name = "visited", nullable = false)
     public boolean isVisited() {
         return visited;
     }
@@ -49,7 +49,7 @@ public class VisitEntity {
     }
 
     @Basic
-    @Column(name = "visible")
+    @Column(name = "visible", nullable = false)
     public boolean isVisible() {
         return visible;
     }
@@ -59,7 +59,7 @@ public class VisitEntity {
     }
 
     @Basic
-    @Column(name = "user_id")
+    @Column(name = "user_id", nullable = false)
     public long getUserId() {
         return userId;
     }
@@ -69,13 +69,32 @@ public class VisitEntity {
     }
 
     @Basic
-    @Column(name = "place_id")
+    @Column(name = "place_id", nullable = false)
     public long getPlaceId() {
         return placeId;
     }
 
     public void setPlaceId(long placeId) {
         this.placeId = placeId;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        VisitEntity that = (VisitEntity) o;
+        return id == that.id &&
+                visited == that.visited &&
+                visible == that.visible &&
+                userId == that.userId &&
+                placeId == that.placeId &&
+                Objects.equals(date, that.date);
+    }
+
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(id, date, visited, visible, userId, placeId);
     }
 
     @OneToMany(mappedBy = "visitByVisitId")
@@ -88,7 +107,7 @@ public class VisitEntity {
     }
 
     @ManyToOne
-    @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false, updatable = false, insertable = false)
+    @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false, insertable = false, updatable = false)
     public UserEntity getUserByUserId() {
         return userByUserId;
     }
@@ -98,7 +117,7 @@ public class VisitEntity {
     }
 
     @ManyToOne
-    @JoinColumn(name = "place_id", referencedColumnName = "id", nullable = false, updatable = false, insertable = false)
+    @JoinColumn(name = "place_id", referencedColumnName = "id", nullable = false, insertable = false, updatable = false)
     public PlaceEntity getPlaceByPlaceId() {
         return placeByPlaceId;
     }
