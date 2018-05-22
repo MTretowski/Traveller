@@ -56,8 +56,7 @@ public class TokenAuthenticationService {
             } else {
                 if (userService.isActive(user)) {
                     return user != null ? new UsernamePasswordAuthenticationToken(user, null, emptyList()) : null;
-                }
-                else{
+                } else {
                     return null;
                 }
             }

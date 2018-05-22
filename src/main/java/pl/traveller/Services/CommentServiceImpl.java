@@ -20,7 +20,7 @@ public class CommentServiceImpl implements CommentService {
     private AuthenticationServiceImpl authenticationService;
 
     @Autowired
-    public CommentServiceImpl(CommentRepository commentRepository, ErrorMessagesServiceImpl errorMessagesService, VisitRepository visitRepository, AuthenticationServiceImpl authenticationService){
+    public CommentServiceImpl(CommentRepository commentRepository, ErrorMessagesServiceImpl errorMessagesService, VisitRepository visitRepository, AuthenticationServiceImpl authenticationService) {
         this.commentRepository = commentRepository;
         this.errorMessagesService = errorMessagesService;
         this.visitRepository = visitRepository;
@@ -34,9 +34,9 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public MessageDTO addComment(CommentEntity commentEntity, long userId, String language, HttpHeaders httpHeaders) throws AuthenticationException {
-        if(authenticationService.authenticate(httpHeaders, userId)) {
+        if (authenticationService.authenticate(httpHeaders, userId)) {
             VisitEntity visitEntity = visitRepository.findById(commentEntity.getVisitId());
-            if(visitEntity != null) {
+            if (visitEntity != null) {
                 if (visitEntity.getUserId() == userId) {
                     if (commentRepository.findByVisitId(commentEntity.getVisitId()) != null) {
                         return new MessageDTO(errorMessagesService.getErrorMessage(language, "visitAlreadyCommented"));
@@ -47,12 +47,10 @@ public class CommentServiceImpl implements CommentService {
                 } else {
                     throw new AuthenticationException();
                 }
-            }
-            else{
+            } else {
                 return new MessageDTO(errorMessagesService.getErrorMessage(language, "visitNotFound"));
             }
-        }
-        else{
+        } else {
             throw new AuthenticationException();
         }
     }

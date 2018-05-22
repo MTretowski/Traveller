@@ -32,26 +32,6 @@ public class PhotoFileEntity {
         this.file = file;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        PhotoFileEntity that = (PhotoFileEntity) o;
-
-        if (id != that.id) return false;
-        if (!Arrays.equals(file, that.file)) return false;
-
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = (int) (id ^ (id >>> 32));
-        result = 31 * result + Arrays.hashCode(file);
-        return result;
-    }
-
     @OneToMany(mappedBy = "photoFileByPhotoFileId")
     public Collection<PhotoEntity> getPhotoFilesById() {
         return photoFilesById;

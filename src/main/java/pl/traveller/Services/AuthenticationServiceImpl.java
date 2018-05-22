@@ -17,13 +17,13 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
 
     @Autowired
-    public AuthenticationServiceImpl(UserRepository userRepository){
+    public AuthenticationServiceImpl(UserRepository userRepository) {
         this.userRepository = userRepository;
         this.secret = TokenAuthenticationService.getSECRET();
         this.headerString = TokenAuthenticationService.getHeaderString();
     }
 
-    private String getUsernameFromToken(String token){
+    private String getUsernameFromToken(String token) {
         return Jwts.parser()
                 .setSigningKey(secret)
                 .parseClaimsJws(token)
@@ -35,10 +35,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Override
     public boolean authenticate(HttpHeaders httpHeaders, long userId) {
         String token = httpHeaders.getFirst(headerString);
-        if(token == null){
+        if (token == null) {
             return false;
-        }
-        else {
+        } else {
             String username = getUsernameFromToken(token);
             UserEntity userEntity = userRepository.findByUsername(username);
             return userEntity != null && userEntity.getId() == userId;

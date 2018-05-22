@@ -78,34 +78,6 @@ public class VisitEntity {
         this.placeId = placeId;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        VisitEntity that = (VisitEntity) o;
-
-        if (id != that.id) return false;
-        if (visited != that.visited) return false;
-        if (visible != that.visible) return false;
-        if (userId != that.userId) return false;
-        if (placeId != that.placeId) return false;
-        if (date != null ? !date.equals(that.date) : that.date != null) return false;
-
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = (int) (id ^ (id >>> 32));
-        result = 31 * result + (date != null ? date.hashCode() : 0);
-        result = 31 * result + (visited ? 1 : 0);
-        result = 31 * result + (visible ? 1 : 0);
-        result = 31 * result + (int) (userId ^ (userId >>> 32));
-        result = 31 * result + (int) (placeId ^ (placeId >>> 32));
-        return result;
-    }
-
     @OneToMany(mappedBy = "visitByVisitId")
     public Collection<CommentEntity> getCommentsById() {
         return commentsById;

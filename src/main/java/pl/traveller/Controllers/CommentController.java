@@ -34,8 +34,10 @@ public class CommentController {
             } else {
                 return new ResponseEntity<>(messageDTO, HttpStatus.CONFLICT);
             }
-        }catch(AuthenticationException e){
+        } catch (AuthenticationException e) {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
     }
+
+
 }

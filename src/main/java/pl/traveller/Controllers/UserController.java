@@ -25,17 +25,16 @@ public class UserController {
         this.userService = userService;
     }
 
-    @RequestMapping(value="/user/login", method=RequestMethod.OPTIONS)
+    @RequestMapping(value = "/user/login", method = RequestMethod.OPTIONS)
     public ResponseEntity getOptions() {
         return new ResponseEntity(HttpStatus.OK);
     }
 
     @GetMapping(value = "/user/details/{userId}")
-    public ResponseEntity getUserDetails(@PathVariable long userId, @RequestHeader HttpHeaders httpHeaders){
-        try{
+    public ResponseEntity getUserDetails(@PathVariable long userId, @RequestHeader HttpHeaders httpHeaders) {
+        try {
             return new ResponseEntity<>(userService.getUserDetails(userId, httpHeaders), HttpStatus.OK);
-        }
-        catch(AuthenticationException e){
+        } catch (AuthenticationException e) {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
     }
@@ -49,7 +48,7 @@ public class UserController {
             } else {
                 return new ResponseEntity<>(messageDTO, HttpStatus.CONFLICT);
             }
-        }catch(AuthenticationException e){
+        } catch (AuthenticationException e) {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
     }

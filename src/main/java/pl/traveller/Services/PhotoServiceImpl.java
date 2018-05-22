@@ -48,10 +48,9 @@ public class PhotoServiceImpl implements PhotoService {
         String username;
         for (PhotoEntity photoEntity : photoEntities) {
             userEntity = userRepository.findById(photoEntity.getUserId());
-            if(userEntity == null){
+            if (userEntity == null) {
                 username = "-";
-            }
-            else{
+            } else {
                 username = userEntity.getUsername();
             }
             photoDTOS.add(new PhotoDTO(
@@ -86,10 +85,9 @@ public class PhotoServiceImpl implements PhotoService {
         String username;
         for (PhotoEntity photoEntity : photoEntities) {
             userEntity = userRepository.findById(photoEntity.getUserId());
-            if(userEntity == null){
+            if (userEntity == null) {
                 username = "-";
-            }
-            else{
+            } else {
                 username = userEntity.getUsername();
             }
             photoDTOS.add(new PhotoDTO(
@@ -155,8 +153,7 @@ public class PhotoServiceImpl implements PhotoService {
             photoRepository.deleteById(photoId);
             photoFileRepository.deleteById(photoFileId);
             return null;
-        }
-        else{
+        } else {
             return new MessageDTO(errorMessagesService.getErrorMessage(language, "photoNotFound"));
         }
     }

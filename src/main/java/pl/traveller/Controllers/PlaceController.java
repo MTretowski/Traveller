@@ -23,29 +23,28 @@ public class PlaceController {
         this.placeService = placeService;
     }
 
-    @GetMapping (value = "/place/all")
-    public ResponseEntity findAllAcceptedAndActive(){
+    @GetMapping(value = "/place/all")
+    public ResponseEntity findAllAcceptedAndActive() {
         return new ResponseEntity<>(placeService.findAllAcceptedAndActive(), HttpStatus.OK);
     }
 
-    @GetMapping (value = "/place/{placeId}/{language}")
-    public ResponseEntity findPlace(@PathVariable long placeId, @PathVariable String language){
+    @GetMapping(value = "/place/{placeId}/{language}")
+    public ResponseEntity findPlace(@PathVariable long placeId, @PathVariable String language) {
         PlaceDTO placeDTO = placeService.findById(placeId);
-        if(placeDTO != null) {
+        if (placeDTO != null) {
             return new ResponseEntity<>(placeDTO, HttpStatus.OK);
-        }
-        else{
+        } else {
             return new ResponseEntity<>(placeService.getErrorMessage(language, "placeNotFound"), HttpStatus.CONFLICT);
         }
     }
 
-    @GetMapping (value = "/place/comments/{placeId}")
-    public ResponseEntity findCommentsByPlaceId(@PathVariable long placeId){
+    @GetMapping(value = "/place/comments/{placeId}")
+    public ResponseEntity findCommentsByPlaceId(@PathVariable long placeId) {
         return new ResponseEntity<>(placeService.findCommentsByPlaceId(placeId), HttpStatus.OK);
     }
 
     @PostMapping(value = "/place/new/{language}")
-    public ResponseEntity newPlace(@RequestBody PlaceEntity placeEntity, @PathVariable String language, @RequestHeader HttpHeaders httpHeaders){
+    public ResponseEntity newPlace(@RequestBody PlaceEntity placeEntity, @PathVariable String language, @RequestHeader HttpHeaders httpHeaders) {
         try {
             MessageDTO messageDTO = placeService.newPlace(placeEntity, language, httpHeaders);
             if (messageDTO == null) {
@@ -53,34 +52,32 @@ public class PlaceController {
             } else {
                 return new ResponseEntity<>(messageDTO, HttpStatus.CONFLICT);
             }
-        }catch(AuthenticationException e){
+        } catch (AuthenticationException e) {
             return new ResponseEntity(HttpStatus.FORBIDDEN);
         }
     }
 
-    @GetMapping (value = "admin/place/all")
-    public ResponseEntity findAll(){
+    @GetMapping(value = "admin/place/all")
+    public ResponseEntity findAll() {
         return new ResponseEntity<>(placeService.findAll(), HttpStatus.OK);
     }
 
     @PutMapping(value = "/admin/place/edit/{language}")
-    public ResponseEntity editPlace(@RequestBody PlaceEntity placeEntity, @PathVariable String language){
+    public ResponseEntity editPlace(@RequestBody PlaceEntity placeEntity, @PathVariable String language) {
         MessageDTO messageDTO = placeService.edit(placeEntity, language);
-        if(messageDTO == null){
+        if (messageDTO == null) {
             return new ResponseEntity<>(placeService.findAll(), HttpStatus.OK);
-        }
-        else{
+        } else {
             return new ResponseEntity<>(messageDTO, HttpStatus.CONFLICT);
         }
     }
 
     @PutMapping(value = "/admin/place/accept/{placeId}/{language}")
-    public ResponseEntity acceptPlace(@PathVariable long placeId, @PathVariable String language){
+    public ResponseEntity acceptPlace(@PathVariable long placeId, @PathVariable String language) {
         MessageDTO messageDTO = placeService.accept(placeId, language);
-        if(messageDTO == null){
+        if (messageDTO == null) {
             return new ResponseEntity<>(placeService.findAll(), HttpStatus.OK);
-        }
-        else{
+        } else {
             return new ResponseEntity<>(messageDTO, HttpStatus.CONFLICT);
         }
     }

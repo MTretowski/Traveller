@@ -7,7 +7,7 @@ import pl.traveller.Entities.PhotoEntity;
 import java.util.List;
 
 @Repository
-public interface PhotoRepository extends CrudRepository<PhotoEntity, Integer>{
+public interface PhotoRepository extends CrudRepository<PhotoEntity, Integer> {
 
     List<PhotoEntity> findAllByAccepted(boolean accepted);
 

@@ -46,7 +46,7 @@ public class VisitController {
         try {
             MessageDTO messageDTO = visitService.newVisit(visitEntity, language, httpHeaders);
             if (messageDTO == null) {
-                return new ResponseEntity<>(visitService.findMyNotVisitedPlaces(visitEntity.getUserId()),HttpStatus.OK);
+                return new ResponseEntity<>(visitService.findMyNotVisitedPlaces(visitEntity.getUserId()), HttpStatus.OK);
             } else {
                 return new ResponseEntity<>(messageDTO, HttpStatus.CONFLICT);
             }
@@ -78,7 +78,7 @@ public class VisitController {
             } else {
                 return new ResponseEntity<>(messageDTO, HttpStatus.CONFLICT);
             }
-        }catch(AuthenticationException e){
+        } catch (AuthenticationException e) {
             return new ResponseEntity(HttpStatus.FORBIDDEN);
         }
     }
@@ -97,10 +97,9 @@ public class VisitController {
     public ResponseEntity hideVisitedPlace(@PathVariable long visitId, @PathVariable long userId, @PathVariable String language, @RequestHeader HttpHeaders httpHeaders) {
         try {
             MessageDTO messageDTO = visitService.hideVisitedPlace(visitId, userId, language, httpHeaders);
-            if(messageDTO == null){
+            if (messageDTO == null) {
                 return new ResponseEntity<>(visitService.findMyVisitedPlaces(userId), HttpStatus.OK);
-            }
-            else{
+            } else {
                 return new ResponseEntity<>(messageDTO, HttpStatus.CONFLICT);
             }
         } catch (AuthenticationException e) {

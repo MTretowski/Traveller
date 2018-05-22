@@ -46,10 +46,9 @@ public class PlaceServiceImpl implements PlaceService {
         String username;
         for (PlaceEntity placeEntity : placeEntities) {
             userEntity = userRepository.findById(placeEntity.getUserId());
-            if(userEntity == null){
+            if (userEntity == null) {
                 username = "-";
-            }
-            else{
+            } else {
                 username = userEntity.getUsername();
             }
             placeDTOS.add(new PlaceDTO(
@@ -75,10 +74,9 @@ public class PlaceServiceImpl implements PlaceService {
         String username;
         for (PlaceEntity placeEntity : placeEntities) {
             userEntity = userRepository.findById(placeEntity.getUserId());
-            if(userEntity == null){
+            if (userEntity == null) {
                 username = "-";
-            }
-            else{
+            } else {
                 username = userEntity.getUsername();
             }
             placeDTOS.add(new PlaceDTO(
@@ -158,10 +156,9 @@ public class PlaceServiceImpl implements PlaceService {
         if (placeEntity != null) {
             UserEntity userEntity = userRepository.findById(placeEntity.getUserId());
             String username;
-            if(userEntity == null){
+            if (userEntity == null) {
                 username = "-";
-            }
-            else{
+            } else {
                 username = userEntity.getUsername();
             }
 
@@ -196,12 +193,11 @@ public class PlaceServiceImpl implements PlaceService {
         for (VisitEntity visitEntity : visitEntities) {
             commentEntity = null;
             commentEntity = commentService.findByVisitId(visitEntity.getId());
-            if(commentEntity != null) {
+            if (commentEntity != null) {
                 userEntity = userRepository.findById(visitEntity.getUserId());
-                if(userEntity == null){
+                if (userEntity == null) {
                     username = "-";
-                }
-                else{
+                } else {
                     username = userEntity.getUsername();
                 }
                 commentDTOS.add(new CommentDTO(

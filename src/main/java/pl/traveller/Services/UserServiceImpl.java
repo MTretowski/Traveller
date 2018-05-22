@@ -43,11 +43,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public String isAdminToString(String username){
-        if(isAdmin(username)){
+    public String isAdminToString(String username) {
+        if (isAdmin(username)) {
             return "true";
-        }
-        else{
+        } else {
             return "false";
         }
     }
@@ -74,10 +73,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public MessageDTO register(UserEntity userEntity, String language) throws AuthenticationException {
-        if(userEntity.getUserRoleId() == 0){
+        if (userEntity.getUserRoleId() == 0) {
             userEntity.setUserRoleId(2);
         }
-        if(!isAdmin(userEntity)) {
+        if (!isAdmin(userEntity)) {
             if (userRepository.findByUsername(userEntity.getUsername()) != null) {
                 return new MessageDTO(errorMessagesService.getErrorMessage(language, "usernameTaken"));
             } else {
@@ -86,8 +85,7 @@ public class UserServiceImpl implements UserService {
                 userRepository.save(userEntity);
                 return null;
             }
-        }
-        else{
+        } else {
             throw new AuthenticationException();
         }
     }
@@ -186,10 +184,9 @@ public class UserServiceImpl implements UserService {
     public UserDTO getUserDetails(long userId, HttpHeaders httpHeaders) throws AuthenticationException {
         if (authorizationService.authenticate(httpHeaders, userId)) {
             UserEntity userEntity = userRepository.findById(userId);
-            if(userEntity == null){
+            if (userEntity == null) {
                 throw new AuthenticationException();
-            }
-            else{
+            } else {
                 return new UserDTO(
                         userEntity.getId(),
                         userEntity.getUsername(),

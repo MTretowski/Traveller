@@ -52,30 +52,6 @@ public class CommentEntity {
         this.visitId = visitId;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        CommentEntity that = (CommentEntity) o;
-
-        if (id != that.id) return false;
-        if (recommended != that.recommended) return false;
-        if (visitId != that.visitId) return false;
-        if (text != null ? !text.equals(that.text) : that.text != null) return false;
-
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = (int) (id ^ (id >>> 32));
-        result = 31 * result + (text != null ? text.hashCode() : 0);
-        result = 31 * result + (recommended ? 1 : 0);
-        result = 31 * result + (int) (visitId ^ (visitId >>> 32));
-        return result;
-    }
-
     @ManyToOne
     @JoinColumn(name = "visit_id", referencedColumnName = "id", nullable = false, updatable = false, insertable = false)
     public VisitEntity getVisitByVisitId() {

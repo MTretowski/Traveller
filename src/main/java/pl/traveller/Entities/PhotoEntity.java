@@ -77,34 +77,6 @@ public class PhotoEntity {
         this.photoFileId = photoFileId;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        PhotoEntity that = (PhotoEntity) o;
-
-        if (id != that.id) return false;
-        if (accepted != that.accepted) return false;
-        if (userId != that.userId) return false;
-        if (placeId != that.placeId) return false;
-        if (photoFileId != that.photoFileId) return false;
-        if (date != null ? !date.equals(that.date) : that.date != null) return false;
-
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = (int) (id ^ (id >>> 32));
-        result = 31 * result + (date != null ? date.hashCode() : 0);
-        result = 31 * result + (accepted ? 1 : 0);
-        result = 31 * result + (int) (userId ^ (userId >>> 32));
-        result = 31 * result + (int) (placeId ^ (placeId >>> 32));
-        result = 31 * result + (int) (photoFileId ^ (photoFileId >>> 32));
-        return result;
-    }
-
     @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false, updatable = false, insertable = false)
     public UserEntity getUserByUserId() {
