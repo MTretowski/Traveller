@@ -43,6 +43,7 @@ public class CommentServiceImpl implements CommentService {
                     if (commentRepository.findByVisitId(commentEntity.getVisitId()) != null) {
                         return new MessageDTO(errorMessagesService.getErrorMessage(language, "visitAlreadyCommented"));
                     } else {
+                        commentEntity.setActive(true);
                         commentRepository.save(commentEntity);
                         return null;
                     }
