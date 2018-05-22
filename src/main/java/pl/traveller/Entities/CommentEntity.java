@@ -1,10 +1,10 @@
 package pl.traveller.Entities;
 
 import javax.persistence.*;
-import java.util.Objects;
+
 
 @Entity
-@Table(name = "comment", schema = "tim", catalog = "")
+@Table(name = "comment", schema = "tim")
 public class CommentEntity {
     private long id;
     private String text;
@@ -14,6 +14,7 @@ public class CommentEntity {
     private VisitEntity visitByVisitId;
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     public long getId() {
         return id;
@@ -61,24 +62,6 @@ public class CommentEntity {
 
     public void setVisitId(long visitId) {
         this.visitId = visitId;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        CommentEntity that = (CommentEntity) o;
-        return id == that.id &&
-                recommended == that.recommended &&
-                active == that.active &&
-                visitId == that.visitId &&
-                Objects.equals(text, that.text);
-    }
-
-    @Override
-    public int hashCode() {
-
-        return Objects.hash(id, text, recommended, active, visitId);
     }
 
     @ManyToOne

@@ -71,7 +71,6 @@ public class CommentServiceImpl implements CommentService {
                     } else {
                         return new MessageDTO(errorMessagesService.getErrorMessage(language, "commentNotFound"));
                     }
-
                 } else {
                     throw new AuthenticationException();
                 }
@@ -86,16 +85,16 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public MessageDTO hideComment(long visitId, String language) {
         VisitEntity visitEntity = visitRepository.findById(visitId);
-        if(visitEntity != null){
+        if (visitEntity != null) {
             CommentEntity commentEntity = commentRepository.findByVisitId(visitId);
-            if(commentEntity != null){
+            if (commentEntity != null) {
                 commentEntity.setActive(false);
                 commentRepository.save(commentEntity);
                 return null;
-            }else{
+            } else {
                 return new MessageDTO(errorMessagesService.getErrorMessage(language, "commentNotFound"));
             }
-        }else{
+        } else {
             return new MessageDTO(errorMessagesService.getErrorMessage(language, "visitNotFound"));
         }
     }
@@ -103,35 +102,35 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public MessageDTO showComment(long visitId, String language) {
         VisitEntity visitEntity = visitRepository.findById(visitId);
-        if(visitEntity != null){
+        if (visitEntity != null) {
             CommentEntity commentEntity = commentRepository.findByVisitId(visitId);
-            if(commentEntity != null){
+            if (commentEntity != null) {
                 commentEntity.setActive(true);
                 commentRepository.save(commentEntity);
                 return null;
-            }else{
+            } else {
                 return new MessageDTO(errorMessagesService.getErrorMessage(language, "commentNotFound"));
             }
-        }else{
+        } else {
             return new MessageDTO(errorMessagesService.getErrorMessage(language, "visitNotFound"));
         }
     }
 
     @Override
     public MessageDTO editComment(CommentEntity commentEntity, String language, HttpHeaders httpHeaders) throws AuthenticationException {
-        if(authenticationService.authenticate(httpHeaders, visitRepository.findById(commentEntity.getVisitId()).getUserId())){
+        if (authenticationService.authenticate(httpHeaders, visitRepository.findById(commentEntity.getVisitId()).getUserId())) {
             CommentEntity commentInDatabase = commentRepository.findByVisitId(commentEntity.getVisitId());
-            if(commentInDatabase != null) {
+            if (commentInDatabase != null) {
                 if (commentInDatabase.getId() == commentEntity.getId()) {
                     commentRepository.save(commentEntity);
                     return null;
                 } else {
                     throw new AuthenticationException();
                 }
-            }else{
+            } else {
                 return new MessageDTO(errorMessagesService.getErrorMessage(language, "commentNotFound"));
             }
-        }else{
+        } else {
             throw new AuthenticationException();
         }
     }

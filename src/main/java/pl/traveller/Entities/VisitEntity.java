@@ -3,10 +3,10 @@ package pl.traveller.Entities;
 import javax.persistence.*;
 import java.sql.Timestamp;
 import java.util.Collection;
-import java.util.Objects;
+
 
 @Entity
-@Table(name = "visit", schema = "tim", catalog = "")
+@Table(name = "visit", schema = "tim")
 public class VisitEntity {
     private long id;
     private Timestamp date;
@@ -19,6 +19,7 @@ public class VisitEntity {
     private PlaceEntity placeByPlaceId;
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     public long getId() {
         return id;
@@ -78,24 +79,6 @@ public class VisitEntity {
         this.placeId = placeId;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        VisitEntity that = (VisitEntity) o;
-        return id == that.id &&
-                visited == that.visited &&
-                visible == that.visible &&
-                userId == that.userId &&
-                placeId == that.placeId &&
-                Objects.equals(date, that.date);
-    }
-
-    @Override
-    public int hashCode() {
-
-        return Objects.hash(id, date, visited, visible, userId, placeId);
-    }
 
     @OneToMany(mappedBy = "visitByVisitId")
     public Collection<CommentEntity> getCommentsById() {

@@ -2,10 +2,10 @@ package pl.traveller.Entities;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
-import java.util.Objects;
+
 
 @Entity
-@Table(name = "photo", schema = "tim", catalog = "")
+@Table(name = "photo", schema = "tim")
 public class PhotoEntity {
     private long id;
     private Timestamp date;
@@ -18,6 +18,7 @@ public class PhotoEntity {
     private PhotoFileEntity photoFileByPhotoFileId;
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     public long getId() {
         return id;
@@ -75,25 +76,6 @@ public class PhotoEntity {
 
     public void setPhotoFileId(long photoFileId) {
         this.photoFileId = photoFileId;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        PhotoEntity that = (PhotoEntity) o;
-        return id == that.id &&
-                accepted == that.accepted &&
-                userId == that.userId &&
-                placeId == that.placeId &&
-                photoFileId == that.photoFileId &&
-                Objects.equals(date, that.date);
-    }
-
-    @Override
-    public int hashCode() {
-
-        return Objects.hash(id, date, accepted, userId, placeId, photoFileId);
     }
 
     @ManyToOne

@@ -2,10 +2,10 @@ package pl.traveller.Entities;
 
 import javax.persistence.*;
 import java.util.Collection;
-import java.util.Objects;
+
 
 @Entity
-@Table(name = "user", schema = "tim", catalog = "")
+@Table(name = "user", schema = "tim")
 public class UserEntity {
     private long id;
     private String username;
@@ -18,6 +18,7 @@ public class UserEntity {
     private Collection<VisitEntity> visitsById;
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     public long getId() {
         return id;
@@ -65,24 +66,6 @@ public class UserEntity {
 
     public void setUserRoleId(long userRoleId) {
         this.userRoleId = userRoleId;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        UserEntity that = (UserEntity) o;
-        return id == that.id &&
-                active == that.active &&
-                userRoleId == that.userRoleId &&
-                Objects.equals(username, that.username) &&
-                Objects.equals(password, that.password);
-    }
-
-    @Override
-    public int hashCode() {
-
-        return Objects.hash(id, username, password, active, userRoleId);
     }
 
     @OneToMany(mappedBy = "userByUserId")
