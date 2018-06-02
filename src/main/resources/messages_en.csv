@@ -10,5 +10,7 @@ placeAlreadyVisited;Visit has been already marked as made.
 placeAlreadyVisitedCannotDelete;Visit has been already marked as made. Is unable to delete id.
 dateFromTheFuture;The entered date comes from the future.
 visitNotMade;Visit has not been already marked as made.
-photoNotFound;The photo with the given ID was not found in database;
-commentNotFound;This visit has not been commented
+photoNotFound;The photo with the given ID was not found in database.
+commentNotFound;This visit has not been commented.
+emptyUsername;The username is empty or contains only whitespaces.
+emptyPassword;The password is empty or contains only whitespaces.

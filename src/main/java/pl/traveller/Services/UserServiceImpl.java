@@ -80,10 +80,18 @@ public class UserServiceImpl implements UserService {
             if (userRepository.findByUsername(userEntity.getUsername()) != null) {
                 return new MessageDTO(errorMessagesService.getErrorMessage(language, "usernameTaken"));
             } else {
-                userEntity.setPassword(BCrypt.hashpw(userEntity.getPassword(), BCrypt.gensalt()));
-                userEntity.setActive(true);
-                userRepository.save(userEntity);
-                return null;
+                if (isStringCorrect(userEntity.getUsername())) {
+                    if (isStringCorrect(userEntity.getPassword())) {
+                        userEntity.setPassword(BCrypt.hashpw(userEntity.getPassword(), BCrypt.gensalt()));
+                        userEntity.setActive(true);
+                        userRepository.save(userEntity);
+                        return null;
+                    } else {
+                        return new MessageDTO(errorMessagesService.getErrorMessage(language, "emptyPassword"));
+                    }
+                } else {
+                    return new MessageDTO(errorMessagesService.getErrorMessage(language, "emptyUsername"));
+                }
             }
         } else {
             throw new AuthenticationException();
@@ -117,9 +125,13 @@ public class UserServiceImpl implements UserService {
             } else if (!BCrypt.checkpw(changePasswordDTO.getOldPassword(), userEntity.getPassword())) {
                 return new MessageDTO(errorMessagesService.getErrorMessage(language, "incorrectOldPassword"));
             } else {
-                userEntity.setPassword(BCrypt.hashpw(changePasswordDTO.getNewPassword(), BCrypt.gensalt()));
-                userRepository.save(userEntity);
-                return null;
+                if (isStringCorrect(changePasswordDTO.getNewPassword())) {
+                    userEntity.setPassword(BCrypt.hashpw(changePasswordDTO.getNewPassword(), BCrypt.gensalt()));
+                    userRepository.save(userEntity);
+                    return null;
+                } else {
+                    return new MessageDTO(errorMessagesService.getErrorMessage(language, "emptyPassword"));
+                }
             }
         } else {
             throw new AuthenticationException();
@@ -133,9 +145,13 @@ public class UserServiceImpl implements UserService {
         if (userEntity == null) {
             return new MessageDTO(errorMessagesService.getErrorMessage(language, "userNotFound"));
         } else {
-            userEntity.setPassword(BCrypt.hashpw(resetPasswordDTO.getNewPassword(), BCrypt.gensalt()));
-            userRepository.save(userEntity);
-            return null;
+            if (isStringCorrect(resetPasswordDTO.getNewPassword())) {
+                userEntity.setPassword(BCrypt.hashpw(resetPasswordDTO.getNewPassword(), BCrypt.gensalt()));
+                userRepository.save(userEntity);
+                return null;
+            } else {
+                return new MessageDTO(errorMessagesService.getErrorMessage(language, "emptyPassword"));
+            }
         }
     }
 
@@ -146,14 +162,18 @@ public class UserServiceImpl implements UserService {
         } else {
             UserEntity userTemp = userRepository.findByUsername(userDTO.getUsername());
             if (userTemp == null || userTemp.getId() == userDTO.getId()) {
-                UserEntity user = new UserEntity();
-                user.setId(userDTO.getId());
-                user.setUsername(userDTO.getUsername());
-                user.setPassword(userRepository.findById(userDTO.getId()).getPassword());
-                user.setActive(userDTO.isActive());
-                user.setUserRoleId(userDTO.getUserRoleId());
-                userRepository.save(user);
-                return null;
+                if (isStringCorrect(userDTO.getUsername())) {
+                    UserEntity user = new UserEntity();
+                    user.setId(userDTO.getId());
+                    user.setUsername(userDTO.getUsername());
+                    user.setPassword(userRepository.findById(userDTO.getId()).getPassword());
+                    user.setActive(userDTO.isActive());
+                    user.setUserRoleId(userDTO.getUserRoleId());
+                    userRepository.save(user);
+                    return null;
+                } else {
+                    return new MessageDTO(errorMessagesService.getErrorMessage(language, "emptyUsername"));
+                }
             } else {
                 return new MessageDTO(errorMessagesService.getErrorMessage(language, "usernameTaken"));
             }
@@ -199,4 +219,15 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    private boolean isStringCorrect(String string) {
+        if (string.equals("")) {
+            return false;
+        } else {
+            if (string.replaceAll(" ", "").equals("")) {
+                return false;
+            } else {
+                return true;
+            }
+        }
+    }
 }
