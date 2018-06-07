@@ -22,6 +22,15 @@ public class CommentController {
         this.commentService = commentService;
     }
 
+    @GetMapping(value = "/comment/findByVisitId/{userId}/{visitId}")
+    public ResponseEntity findCommentByVisitId(@PathVariable long userId, @PathVariable long visitId, @RequestHeader HttpHeaders httpHeaders){
+        try{
+            return new ResponseEntity<>(commentService.findByVisitId(visitId, userId, httpHeaders), HttpStatus.OK);
+        }catch(AuthenticationException e){
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
+    }
+
     @PostMapping(value = "/comment/add/{userId}/{language}")
     public ResponseEntity addComment(@RequestBody CommentEntity commentEntity, @PathVariable long userId, @PathVariable String language, @RequestHeader HttpHeaders httpHeaders) {
         try {
@@ -49,7 +58,6 @@ public class CommentController {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
     }
-
 
     @DeleteMapping(value = "/comment/delete/{userId}/{visitId}/{language}")
     public ResponseEntity deleteComment(@PathVariable long userId, @PathVariable long visitId, @PathVariable String language, @RequestHeader HttpHeaders httpHeaders) {

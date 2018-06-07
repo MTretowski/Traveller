@@ -25,5 +25,7 @@ public interface PlaceService {
 
     MessageDTO getErrorMessage(String language, String key);
 
-    List<CommentDTO> findCommentsByPlaceId(long placeId);
+    List<CommentDTO> findActiveCommentsByPlaceId(long placeId);
+
+    List<CommentDTO> findAllCommentsByPlaceId(long placeId);
 }

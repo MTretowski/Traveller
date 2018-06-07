@@ -39,8 +39,8 @@ public class PlaceController {
     }
 
     @GetMapping(value = "/place/comments/{placeId}")
-    public ResponseEntity findCommentsByPlaceId(@PathVariable long placeId) {
-        return new ResponseEntity<>(placeService.findCommentsByPlaceId(placeId), HttpStatus.OK);
+    public ResponseEntity findActiveCommentsByPlaceId(@PathVariable long placeId) {
+        return new ResponseEntity<>(placeService.findActiveCommentsByPlaceId(placeId), HttpStatus.OK);
     }
 
     @PostMapping(value = "/place/new/{language}")
@@ -80,5 +80,10 @@ public class PlaceController {
         } else {
             return new ResponseEntity<>(messageDTO, HttpStatus.CONFLICT);
         }
+    }
+
+    @GetMapping(value = "/admin/place/comments/{placeId}")
+    public ResponseEntity findAllCommentsByPlaceId(@PathVariable long placeId) {
+        return new ResponseEntity<>(placeService.findAllCommentsByPlaceId(placeId), HttpStatus.OK);
     }
 }

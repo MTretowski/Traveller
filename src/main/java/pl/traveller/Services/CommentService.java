@@ -1,14 +1,16 @@
 package pl.traveller.Services;
 
 import org.springframework.http.HttpHeaders;
+import pl.traveller.DTOs.CommentDTO;
 import pl.traveller.DTOs.MessageDTO;
 import pl.traveller.Entities.CommentEntity;
 
 import javax.security.sasl.AuthenticationException;
+import java.util.List;
 
 public interface CommentService {
 
-    CommentEntity findActiveByVisitId(long visitId);
+    CommentDTO findByVisitId(long visitId, long userId, HttpHeaders httpHeaders) throws AuthenticationException;
 
     MessageDTO addComment(CommentEntity commentEntity, long userId, String language, HttpHeaders httpHeaders) throws AuthenticationException;
 

@@ -7,10 +7,12 @@ import org.springframework.transaction.annotation.Transactional;
 import pl.traveller.DTOs.CommentDTO;
 import pl.traveller.DTOs.MessageDTO;
 import pl.traveller.DTOs.PlaceDTO;
+import pl.traveller.DTOs.VisitDTO;
 import pl.traveller.Entities.CommentEntity;
 import pl.traveller.Entities.PlaceEntity;
 import pl.traveller.Entities.UserEntity;
 import pl.traveller.Entities.VisitEntity;
+import pl.traveller.Repositories.CommentRepository;
 import pl.traveller.Repositories.PlaceRepository;
 import pl.traveller.Repositories.UserRepository;
 
@@ -26,22 +28,34 @@ public class PlaceServiceImpl implements PlaceService {
     private ErrorMessagesServiceImpl errorMessagesService;
     private UserRepository userRepository;
     private VisitServiceImpl visitService;
-    private CommentServiceImpl commentService;
+    private CommentRepository commentRepository;
     private AuthenticationServiceImpl authenticationService;
 
     @Autowired
-    public PlaceServiceImpl(PlaceRepository placeRepository, ErrorMessagesServiceImpl errorMessagesService, UserRepository userRepository, VisitServiceImpl visitService, CommentServiceImpl commentService, AuthenticationServiceImpl authenticationService) {
+    public PlaceServiceImpl(PlaceRepository placeRepository, ErrorMessagesServiceImpl errorMessagesService, UserRepository userRepository, VisitServiceImpl visitService, CommentRepository commentRepository, AuthenticationServiceImpl authenticationService) {
         this.placeRepository = placeRepository;
         this.errorMessagesService = errorMessagesService;
         this.userRepository = userRepository;
         this.visitService = visitService;
-        this.commentService = commentService;
+        this.commentRepository = commentRepository;
         this.authenticationService = authenticationService;
     }
 
-    public List<PlaceDTO> findAll() {
-        List<PlaceEntity> placeEntities = placeRepository.findAll();
-        List<PlaceDTO> placeDTOS = new ArrayList<>(placeEntities.size());
+    private PlaceDTO convertPlaceEntityToPlaceDTO(PlaceEntity placeEntity, String username) {
+        return new PlaceDTO(
+                placeEntity.getId(),
+                placeEntity.getName(),
+                placeEntity.getAddress(),
+                placeEntity.getGps(),
+                placeEntity.getDescription(),
+                placeEntity.isAccepted(),
+                placeEntity.isActive(),
+                placeEntity.getUserId(),
+                username);
+    }
+
+    private ArrayList<PlaceDTO> convertPlaceEntitiesListToPlaceDTOsList(List<PlaceEntity> placeEntities) {
+        ArrayList<PlaceDTO> placeDTOS = new ArrayList<>(placeEntities.size());
         UserEntity userEntity;
         String username;
         for (PlaceEntity placeEntity : placeEntities) {
@@ -64,34 +78,15 @@ public class PlaceServiceImpl implements PlaceService {
             ));
         }
         return placeDTOS;
+    }
+
+    public List<PlaceDTO> findAll() {
+        return (convertPlaceEntitiesListToPlaceDTOsList(placeRepository.findAll()));
     }
 
     @Override
     public List<PlaceDTO> findAllAcceptedAndActive() {
-        List<PlaceEntity> placeEntities = placeRepository.findAllByAcceptedAndActive(true, true);
-        List<PlaceDTO> placeDTOS = new ArrayList<>(placeEntities.size());
-        UserEntity userEntity;
-        String username;
-        for (PlaceEntity placeEntity : placeEntities) {
-            userEntity = userRepository.findById(placeEntity.getUserId());
-            if (userEntity == null) {
-                username = "-";
-            } else {
-                username = userEntity.getUsername();
-            }
-            placeDTOS.add(new PlaceDTO(
-                    placeEntity.getId(),
-                    placeEntity.getName(),
-                    placeEntity.getAddress(),
-                    placeEntity.getGps(),
-                    placeEntity.getDescription(),
-                    placeEntity.isAccepted(),
-                    placeEntity.isActive(),
-                    placeEntity.getUserId(),
-                    username
-            ));
-        }
-        return placeDTOS;
+        return (convertPlaceEntitiesListToPlaceDTOsList(placeRepository.findAllByAcceptedAndActive(true, true)));
     }
 
     @Override
@@ -161,20 +156,43 @@ public class PlaceServiceImpl implements PlaceService {
             } else {
                 username = userEntity.getUsername();
             }
-
-            return new PlaceDTO(
-                    placeEntity.getId(),
-                    placeEntity.getName(),
-                    placeEntity.getAddress(),
-                    placeEntity.getGps(),
-                    placeEntity.getDescription(),
-                    placeEntity.isAccepted(),
-                    placeEntity.isActive(),
-                    placeEntity.getUserId(),
-                    username);
+            return convertPlaceEntityToPlaceDTO(placeEntity, username);
         } else {
             return null;
         }
+    }
+
+    private ArrayList<CommentDTO> findCommentsFromVisitList(List<VisitEntity> visitEntities, boolean active) {
+        ArrayList<CommentDTO> commentDTOS = new ArrayList<>();
+        CommentEntity commentEntity;
+        UserEntity userEntity;
+        String username;
+        long userId;
+
+        for (VisitEntity visitEntity : visitEntities) {
+            commentEntity = commentRepository.findByVisitIdAndActive(visitEntity.getId(), active);
+            if (commentEntity != null) {
+                userEntity = userRepository.findById(visitEntity.getUserId());
+                if (userEntity == null) {
+                    username = "-";
+                    userId = -1;
+                } else {
+                    username = userEntity.getUsername();
+                    userId = userEntity.getId();
+                }
+                commentDTOS.add(new CommentDTO(
+                        commentEntity.getId(),
+                        commentEntity.getText(),
+                        commentEntity.isRecommended(),
+                        visitEntity.getDate(),
+                        commentEntity.isActive(),
+                        username,
+                        userId,
+                        visitEntity.getId()
+                ));
+            }
+        }
+        return commentDTOS;
     }
 
     @Override
@@ -183,32 +201,15 @@ public class PlaceServiceImpl implements PlaceService {
     }
 
     @Override
-    public List<CommentDTO> findCommentsByPlaceId(long placeId) {
-        List<VisitEntity> visitEntities = visitService.findAllByPlaceId(placeId);
-        List<CommentDTO> commentDTOS = new ArrayList<>();
-        CommentEntity commentEntity;
-        UserEntity userEntity;
-        String username;
+    public ArrayList<CommentDTO> findActiveCommentsByPlaceId(long placeId) {
+        return findCommentsFromVisitList(visitService.findAllByPlaceId(placeId), true);
+    }
 
-        for (VisitEntity visitEntity : visitEntities) {
-            commentEntity = null;
-            commentEntity = commentService.findActiveByVisitId(visitEntity.getId());
-            if (commentEntity != null) {
-                userEntity = userRepository.findById(visitEntity.getUserId());
-                if (userEntity == null) {
-                    username = "-";
-                } else {
-                    username = userEntity.getUsername();
-                }
-                commentDTOS.add(new CommentDTO(
-                        commentEntity.getText(),
-                        commentEntity.isRecommended(),
-                        visitEntity.getDate(),
-                        commentEntity.isActive(),
-                        username
-                ));
-            }
-        }
+    @Override
+    public List<CommentDTO> findAllCommentsByPlaceId(long placeId) {
+        List<VisitEntity> visitEntities = visitService.findAllByPlaceId(placeId);
+        ArrayList<CommentDTO> commentDTOS = findCommentsFromVisitList(visitEntities, true);
+        commentDTOS.addAll(findCommentsFromVisitList(visitEntities, false));
         return commentDTOS;
     }
 }

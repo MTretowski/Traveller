@@ -4,10 +4,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import pl.traveller.DTOs.CommentDTO;
 import pl.traveller.DTOs.MessageDTO;
 import pl.traveller.Entities.CommentEntity;
+import pl.traveller.Entities.UserEntity;
 import pl.traveller.Entities.VisitEntity;
 import pl.traveller.Repositories.CommentRepository;
+import pl.traveller.Repositories.UserRepository;
 import pl.traveller.Repositories.VisitRepository;
 
 import javax.security.sasl.AuthenticationException;
@@ -20,18 +23,51 @@ public class CommentServiceImpl implements CommentService {
     private ErrorMessagesServiceImpl errorMessagesService;
     private VisitRepository visitRepository;
     private AuthenticationServiceImpl authenticationService;
+    private UserRepository userRepository;
 
     @Autowired
-    public CommentServiceImpl(CommentRepository commentRepository, ErrorMessagesServiceImpl errorMessagesService, VisitRepository visitRepository, AuthenticationServiceImpl authenticationService) {
+    public CommentServiceImpl(CommentRepository commentRepository, ErrorMessagesServiceImpl errorMessagesService, VisitRepository visitRepository, AuthenticationServiceImpl authenticationService, UserRepository userRepository) {
         this.commentRepository = commentRepository;
         this.errorMessagesService = errorMessagesService;
         this.visitRepository = visitRepository;
         this.authenticationService = authenticationService;
+        this.userRepository = userRepository;
     }
 
     @Override
-    public CommentEntity findActiveByVisitId(long visitId) {
-        return commentRepository.findByVisitIdAndActive(visitId, true);
+    public CommentDTO findByVisitId(long visitId, long userId, HttpHeaders httpHeaders) throws AuthenticationException {
+        if (authenticationService.authenticate(httpHeaders, userId)) {
+            String username;
+            VisitEntity visitEntity = visitRepository.findById(visitId);
+            if (visitEntity == null) {
+                return null;
+            } else {
+                CommentEntity commentEntity = commentRepository.findByVisitId(visitId);
+                if (commentEntity == null) {
+                    return null;
+                } else {
+                    UserEntity userEntity = userRepository.findById(visitEntity.getUserId());
+                    if (userEntity == null) {
+                        username = "-";
+                    } else {
+                        username = userEntity.getUsername();
+                    }
+                    return new CommentDTO(
+                            commentEntity.getId(),
+                            commentEntity.getText(),
+                            commentEntity.isRecommended(),
+                            visitEntity.getDate(),
+                            commentEntity.isActive(),
+                            username,
+                            visitEntity.getUserId(),
+                            visitEntity.getId()
+                    );
+                }
+
+            }
+        } else {
+            throw new AuthenticationException();
+        }
     }
 
     @Override

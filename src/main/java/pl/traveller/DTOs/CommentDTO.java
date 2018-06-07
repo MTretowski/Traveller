@@ -13,9 +13,12 @@ import java.sql.Timestamp;
 @NoArgsConstructor
 public class CommentDTO {
 
+    private long id;
     private String text;
     private boolean recommended;
     private Timestamp visitDate;
     private boolean active;
     private String username;
+    private long userId;
+    private long visitId;
 }
