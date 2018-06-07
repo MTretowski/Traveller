@@ -28,4 +28,8 @@ public interface PlaceService {
     List<CommentDTO> findActiveCommentsByPlaceId(long placeId);
 
     List<CommentDTO> findAllCommentsByPlaceId(long placeId);
+
+    List<PlaceDTO> findAllVisitedPlaces(long userId, HttpHeaders httpHeaders) throws AuthenticationException;
+
+    List<PlaceDTO> findAllNotVisitedPlaces(long userId, HttpHeaders httpHeaders) throws AuthenticationException;
 }

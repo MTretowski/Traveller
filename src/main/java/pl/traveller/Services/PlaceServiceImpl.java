@@ -212,4 +212,51 @@ public class PlaceServiceImpl implements PlaceService {
         commentDTOS.addAll(findCommentsFromVisitList(visitEntities, false));
         return commentDTOS;
     }
+
+    private List<PlaceDTO> findPlacesByVisitList(List<VisitDTO> visitDTOS){
+        ArrayList<PlaceDTO> placeDTOS = new ArrayList<>(visitDTOS.size());
+        PlaceEntity placeEntity;
+        UserEntity userEntity;
+        String username;
+        for(VisitDTO visitDTO: visitDTOS){
+            placeEntity = placeRepository.findById(visitDTO.getPlaceId());
+            userEntity = userRepository.findById(placeEntity.getUserId());
+            if(userEntity == null){
+                username = "-";
+            }
+            else{
+                username = userEntity.getUsername();
+            }
+            placeDTOS.add(new PlaceDTO(
+                    placeEntity.getId(),
+                    placeEntity.getName(),
+                    placeEntity.getAddress(),
+                    placeEntity.getGps(),
+                    placeEntity.getDescription(),
+                    placeEntity.isAccepted(),
+                    placeEntity.isActive(),
+                    placeEntity.getUserId(),
+                    username
+            ));
+        }
+        return placeDTOS;
+    }
+
+    @Override
+    public List<PlaceDTO> findAllVisitedPlaces(long userId, HttpHeaders httpHeaders) throws AuthenticationException {
+        if(authenticationService.authenticate(httpHeaders, userId)){
+            return findPlacesByVisitList(visitService.findMyVisitedPlaces(userId));
+        }else{
+            throw new AuthenticationException();
+        }
+    }
+
+    @Override
+    public List<PlaceDTO> findAllNotVisitedPlaces(long userId, HttpHeaders httpHeaders) throws AuthenticationException {
+        if(authenticationService.authenticate(httpHeaders, userId)){
+            return findPlacesByVisitList(visitService.findMyNotVisitedPlaces(userId));
+        }else{
+            throw new AuthenticationException();
+        }
+    }
 }
