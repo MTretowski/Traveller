@@ -12,3 +12,5 @@ dateFromTheFuture;Wprowadzona data pochodzi z przyszłości.
 visitNotMade;Wizyta nie została jeszcze oznaczona jako odbyta.
 photoNotFound;W bazie danych nie znaleziono zdjęcia o podanym identyfikatorze.
 commentNotFound;Do tej wizyty nie został dodany komentarz.
+emptyUsername;Podana nazwa użytkownika jest pusta lub zawiera same spacje.
+emptyPassword;Podane hasło jest puste lub zawiera same spacje.
