@@ -8,7 +8,6 @@ visitAlreadyCommented;Komentarz do tej wizyty został już opublikowany.
 visitNotFound;W bazie danych nie znaleziono wizyty o podanym identyfikatorze.
 placeAlreadyVisited;Wizyta została już oznaczona jako odbyta.
 placeAlreadyVisitedCannotDelete;Wizyta została już oznaczona jako odbyta. Nie można jej usunąć.
-dateFromTheFuture;Wprowadzona data pochodzi z przyszłości.
 visitNotMade;Wizyta nie została jeszcze oznaczona jako odbyta.
 photoNotFound;W bazie danych nie znaleziono zdjęcia o podanym identyfikatorze.
 commentNotFound;Do tej wizyty nie został dodany komentarz.

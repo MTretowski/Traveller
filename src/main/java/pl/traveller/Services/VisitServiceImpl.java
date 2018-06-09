@@ -167,14 +167,10 @@ public class VisitServiceImpl implements VisitService {
             if (visitEntity != null) {
                 if (visitEntity.getUserId() == visitDateDTO.getUserId()) {
                     if (!visitEntity.isVisited()) {
-                        if (visitDateDTO.getDate().before(new Timestamp(System.currentTimeMillis()))) {
-                            visitEntity.setVisited(true);
-                            visitEntity.setDate(visitDateDTO.getDate());
-                            visitRepository.save(visitEntity);
-                            return null;
-                        } else {
-                            return new MessageDTO(errorMessagesService.getErrorMessage(language, "dateFromTheFuture"));
-                        }
+                        visitEntity.setVisited(true);
+                        visitEntity.setDate(visitDateDTO.getDate());
+                        visitRepository.save(visitEntity);
+                        return null;
                     } else {
                         return new MessageDTO(errorMessagesService.getErrorMessage(language, "placeAlreadyVisited"));
                     }
