@@ -6,6 +6,8 @@ import pl.traveller.DTOs.MessageDTO;
 import pl.traveller.Entities.CommentEntity;
 
 import javax.security.sasl.AuthenticationException;
+import java.util.ArrayList;
+import java.util.List;
 
 public interface CommentService {
 
@@ -20,4 +22,8 @@ public interface CommentService {
     MessageDTO showComment(long visitId, String language);
 
     MessageDTO editComment(CommentEntity commentEntity, String language, HttpHeaders httpHeaders) throws AuthenticationException;
+
+    ArrayList<CommentDTO> findActiveCommentsByPlaceId(long placeId);
+
+    List<CommentDTO> findAllCommentsByPlaceId(long placeId);
 }

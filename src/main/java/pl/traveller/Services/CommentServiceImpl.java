@@ -14,6 +14,8 @@ import pl.traveller.Repositories.UserRepository;
 import pl.traveller.Repositories.VisitRepository;
 
 import javax.security.sasl.AuthenticationException;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @Transactional
@@ -22,14 +24,16 @@ public class CommentServiceImpl implements CommentService {
     private CommentRepository commentRepository;
     private ErrorMessagesServiceImpl errorMessagesService;
     private VisitRepository visitRepository;
+    private VisitServiceImpl visitService;
     private AuthenticationServiceImpl authenticationService;
     private UserRepository userRepository;
 
     @Autowired
-    public CommentServiceImpl(CommentRepository commentRepository, ErrorMessagesServiceImpl errorMessagesService, VisitRepository visitRepository, AuthenticationServiceImpl authenticationService, UserRepository userRepository) {
+    public CommentServiceImpl(CommentRepository commentRepository, ErrorMessagesServiceImpl errorMessagesService, VisitRepository visitRepository, VisitServiceImpl visitService, AuthenticationServiceImpl authenticationService, UserRepository userRepository) {
         this.commentRepository = commentRepository;
         this.errorMessagesService = errorMessagesService;
         this.visitRepository = visitRepository;
+        this.visitService = visitService;
         this.authenticationService = authenticationService;
         this.userRepository = userRepository;
     }
@@ -169,5 +173,52 @@ public class CommentServiceImpl implements CommentService {
         } else {
             throw new AuthenticationException();
         }
+    }
+
+
+    private ArrayList<CommentDTO> findCommentsFromVisitList(List<VisitEntity> visitEntities, boolean active) {
+        ArrayList<CommentDTO> commentDTOS = new ArrayList<>(visitEntities.size());
+        CommentEntity commentEntity;
+        UserEntity userEntity;
+        String username;
+        long userId;
+
+        for (VisitEntity visitEntity : visitEntities) {
+            commentEntity = commentRepository.findByVisitIdAndActive(visitEntity.getId(), active);
+            if (commentEntity != null) {
+                userEntity = userRepository.findById(visitEntity.getUserId());
+                if (userEntity == null) {
+                    username = "-";
+                    userId = -1;
+                } else {
+                    username = userEntity.getUsername();
+                    userId = userEntity.getId();
+                }
+                commentDTOS.add(new CommentDTO(
+                        commentEntity.getId(),
+                        commentEntity.getText(),
+                        commentEntity.isRecommended(),
+                        visitEntity.getDate(),
+                        commentEntity.isActive(),
+                        username,
+                        userId,
+                        visitEntity.getId()
+                ));
+            }
+        }
+        return commentDTOS;
+    }
+
+    @Override
+    public ArrayList<CommentDTO> findActiveCommentsByPlaceId(long placeId) {
+        return findCommentsFromVisitList(visitService.findAllByPlaceId(placeId), true);
+    }
+
+    @Override
+    public List<CommentDTO> findAllCommentsByPlaceId(long placeId) {
+        List<VisitEntity> visitEntities = visitService.findAllByPlaceId(placeId);
+        ArrayList<CommentDTO> commentDTOS = findCommentsFromVisitList(visitEntities, true);
+        commentDTOS.addAll(findCommentsFromVisitList(visitEntities, false));
+        return commentDTOS;
     }
 }

@@ -31,6 +31,11 @@ public class CommentController {
         }
     }
 
+    @GetMapping(value = "/comment/allByPlaceId/{placeId}")
+    public ResponseEntity findActiveCommentsByPlaceId(@PathVariable long placeId) {
+        return new ResponseEntity<>(commentService.findActiveCommentsByPlaceId(placeId), HttpStatus.OK);
+    }
+
     @PostMapping(value = "/comment/add/{userId}/{language}")
     public ResponseEntity addComment(@RequestBody CommentEntity commentEntity, @PathVariable long userId, @PathVariable String language, @RequestHeader HttpHeaders httpHeaders) {
         try {
@@ -71,6 +76,11 @@ public class CommentController {
         } catch (AuthenticationException e) {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
+    }
+
+    @GetMapping(value = "/admin/comment/allByPlaceId/{placeId}")
+    public ResponseEntity findAllCommentsByPlaceId(@PathVariable long placeId) {
+        return new ResponseEntity<>(commentService.findAllCommentsByPlaceId(placeId), HttpStatus.OK);
     }
 
     @PostMapping(value = "/admin/comment/hide/{visitId}/{language}")

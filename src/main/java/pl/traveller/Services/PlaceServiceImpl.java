@@ -4,14 +4,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import pl.traveller.DTOs.CommentDTO;
 import pl.traveller.DTOs.MessageDTO;
 import pl.traveller.DTOs.PlaceDTO;
 import pl.traveller.DTOs.VisitDTO;
-import pl.traveller.Entities.CommentEntity;
 import pl.traveller.Entities.PlaceEntity;
 import pl.traveller.Entities.UserEntity;
-import pl.traveller.Entities.VisitEntity;
 import pl.traveller.Repositories.CommentRepository;
 import pl.traveller.Repositories.PlaceRepository;
 import pl.traveller.Repositories.UserRepository;
@@ -28,7 +25,6 @@ public class PlaceServiceImpl implements PlaceService {
     private ErrorMessagesServiceImpl errorMessagesService;
     private UserRepository userRepository;
     private VisitServiceImpl visitService;
-    private CommentRepository commentRepository;
     private AuthenticationServiceImpl authenticationService;
 
     @Autowired
@@ -37,7 +33,6 @@ public class PlaceServiceImpl implements PlaceService {
         this.errorMessagesService = errorMessagesService;
         this.userRepository = userRepository;
         this.visitService = visitService;
-        this.commentRepository = commentRepository;
         this.authenticationService = authenticationService;
     }
 
@@ -162,55 +157,9 @@ public class PlaceServiceImpl implements PlaceService {
         }
     }
 
-    private ArrayList<CommentDTO> findCommentsFromVisitList(List<VisitEntity> visitEntities, boolean active) {
-        ArrayList<CommentDTO> commentDTOS = new ArrayList<>(visitEntities.size());
-        CommentEntity commentEntity;
-        UserEntity userEntity;
-        String username;
-        long userId;
-
-        for (VisitEntity visitEntity : visitEntities) {
-            commentEntity = commentRepository.findByVisitIdAndActive(visitEntity.getId(), active);
-            if (commentEntity != null) {
-                userEntity = userRepository.findById(visitEntity.getUserId());
-                if (userEntity == null) {
-                    username = "-";
-                    userId = -1;
-                } else {
-                    username = userEntity.getUsername();
-                    userId = userEntity.getId();
-                }
-                commentDTOS.add(new CommentDTO(
-                        commentEntity.getId(),
-                        commentEntity.getText(),
-                        commentEntity.isRecommended(),
-                        visitEntity.getDate(),
-                        commentEntity.isActive(),
-                        username,
-                        userId,
-                        visitEntity.getId()
-                ));
-            }
-        }
-        return commentDTOS;
-    }
-
     @Override
     public MessageDTO getErrorMessage(String language, String key) {
         return new MessageDTO(errorMessagesService.getErrorMessage(language, key));
-    }
-
-    @Override
-    public ArrayList<CommentDTO> findActiveCommentsByPlaceId(long placeId) {
-        return findCommentsFromVisitList(visitService.findAllByPlaceId(placeId), true);
-    }
-
-    @Override
-    public List<CommentDTO> findAllCommentsByPlaceId(long placeId) {
-        List<VisitEntity> visitEntities = visitService.findAllByPlaceId(placeId);
-        ArrayList<CommentDTO> commentDTOS = findCommentsFromVisitList(visitEntities, true);
-        commentDTOS.addAll(findCommentsFromVisitList(visitEntities, false));
-        return commentDTOS;
     }
 
     private List<PlaceDTO> findPlacesByVisitList(List<VisitDTO> visitDTOS) {
