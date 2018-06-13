@@ -163,7 +163,7 @@ public class PlaceServiceImpl implements PlaceService {
     }
 
     private ArrayList<CommentDTO> findCommentsFromVisitList(List<VisitEntity> visitEntities, boolean active) {
-        ArrayList<CommentDTO> commentDTOS = new ArrayList<>();
+        ArrayList<CommentDTO> commentDTOS = new ArrayList<>(visitEntities.size());
         CommentEntity commentEntity;
         UserEntity userEntity;
         String username;
@@ -213,18 +213,17 @@ public class PlaceServiceImpl implements PlaceService {
         return commentDTOS;
     }
 
-    private List<PlaceDTO> findPlacesByVisitList(List<VisitDTO> visitDTOS){
+    private List<PlaceDTO> findPlacesByVisitList(List<VisitDTO> visitDTOS) {
         ArrayList<PlaceDTO> placeDTOS = new ArrayList<>(visitDTOS.size());
         PlaceEntity placeEntity;
         UserEntity userEntity;
         String username;
-        for(VisitDTO visitDTO: visitDTOS){
+        for (VisitDTO visitDTO : visitDTOS) {
             placeEntity = placeRepository.findById(visitDTO.getPlaceId());
             userEntity = userRepository.findById(placeEntity.getUserId());
-            if(userEntity == null){
+            if (userEntity == null) {
                 username = "-";
-            }
-            else{
+            } else {
                 username = userEntity.getUsername();
             }
             placeDTOS.add(new PlaceDTO(
@@ -244,18 +243,18 @@ public class PlaceServiceImpl implements PlaceService {
 
     @Override
     public List<PlaceDTO> findAllVisitedPlaces(long userId, HttpHeaders httpHeaders) throws AuthenticationException {
-        if(authenticationService.authenticate(httpHeaders, userId)){
+        if (authenticationService.authenticate(httpHeaders, userId)) {
             return findPlacesByVisitList(visitService.findMyVisitedPlaces(userId));
-        }else{
+        } else {
             throw new AuthenticationException();
         }
     }
 
     @Override
     public List<PlaceDTO> findAllNotVisitedPlaces(long userId, HttpHeaders httpHeaders) throws AuthenticationException {
-        if(authenticationService.authenticate(httpHeaders, userId)){
+        if (authenticationService.authenticate(httpHeaders, userId)) {
             return findPlacesByVisitList(visitService.findMyNotVisitedPlaces(userId));
-        }else{
+        } else {
             throw new AuthenticationException();
         }
     }

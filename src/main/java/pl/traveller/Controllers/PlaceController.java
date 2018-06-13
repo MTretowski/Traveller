@@ -39,19 +39,19 @@ public class PlaceController {
     }
 
     @GetMapping(value = "place/allVisitedPlaces/{userId}")
-    public ResponseEntity findAllVisitedPlaces(@PathVariable long userId, @RequestHeader HttpHeaders httpHeaders){
+    public ResponseEntity findAllVisitedPlaces(@PathVariable long userId, @RequestHeader HttpHeaders httpHeaders) {
         try {
             return new ResponseEntity<>(placeService.findAllVisitedPlaces(userId, httpHeaders), HttpStatus.OK);
-        }catch(AuthenticationException e){
+        } catch (AuthenticationException e) {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
     }
 
     @GetMapping(value = "place/allNotVisitedPlaces/{userId}")
-    public ResponseEntity findAllNotVisitedPlaces(@PathVariable long userId, @RequestHeader HttpHeaders httpHeaders){
+    public ResponseEntity findAllNotVisitedPlaces(@PathVariable long userId, @RequestHeader HttpHeaders httpHeaders) {
         try {
             return new ResponseEntity<>(placeService.findAllNotVisitedPlaces(userId, httpHeaders), HttpStatus.OK);
-        }catch(AuthenticationException e){
+        } catch (AuthenticationException e) {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
     }

@@ -12,7 +12,6 @@ import pl.traveller.Repositories.PlaceRepository;
 import pl.traveller.Repositories.VisitRepository;
 
 import javax.security.sasl.AuthenticationException;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 

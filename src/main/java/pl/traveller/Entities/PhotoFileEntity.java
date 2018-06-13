@@ -4,7 +4,6 @@ import javax.persistence.*;
 import java.util.Arrays;
 import java.util.Collection;
 
-
 @Entity
 @Table(name = "photo_file", schema = "tim")
 public class PhotoFileEntity {

@@ -15,7 +15,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private String secret;
     private String headerString;
 
-
     @Autowired
     public AuthenticationServiceImpl(UserRepository userRepository) {
         this.userRepository = userRepository;
@@ -30,7 +29,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .getBody()
                 .getSubject();
     }
-
 
     @Override
     public boolean authenticate(HttpHeaders httpHeaders, long userId) {

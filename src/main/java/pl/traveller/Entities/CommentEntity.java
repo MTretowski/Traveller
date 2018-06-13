@@ -2,7 +2,6 @@ package pl.traveller.Entities;
 
 import javax.persistence.*;
 
-
 @Entity
 @Table(name = "comment", schema = "tim")
 public class CommentEntity {

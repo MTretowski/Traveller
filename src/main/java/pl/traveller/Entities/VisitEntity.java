@@ -4,7 +4,6 @@ import javax.persistence.*;
 import java.sql.Timestamp;
 import java.util.Collection;
 
-
 @Entity
 @Table(name = "visit", schema = "tim")
 public class VisitEntity {
@@ -30,7 +29,7 @@ public class VisitEntity {
     }
 
     @Basic
-    @Column(name = "date", nullable = true)
+    @Column(name = "date")
     public Timestamp getDate() {
         return date;
     }

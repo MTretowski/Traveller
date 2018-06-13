@@ -3,7 +3,6 @@ package pl.traveller.Entities;
 import javax.persistence.*;
 import java.util.Collection;
 
-
 @Entity
 @Table(name = "place", schema = "tim")
 public class PlaceEntity {
@@ -61,7 +60,7 @@ public class PlaceEntity {
     }
 
     @Basic
-    @Column(name = "description", nullable = true, length = 254)
+    @Column(name = "description", length = 254)
     public String getDescription() {
         return description;
     }

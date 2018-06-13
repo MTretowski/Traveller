@@ -39,10 +39,8 @@ public class PhotoServiceImpl implements PhotoService {
         this.userRepository = userRepository;
     }
 
-    @Override
-    public List<PhotoDTO> findAllNotAccepted() {
-        List<PhotoEntity> photoEntities = photoRepository.findAllByAccepted(false);
-        List<PhotoDTO> photoDTOS = new ArrayList<>();
+    private List<PhotoDTO> convertPhotoEntitiesToPhotoDTOs(List<PhotoEntity> photoEntities) {
+        List<PhotoDTO> photoDTOS = new ArrayList<>(photoEntities.size());
         UserEntity userEntity;
         String username;
         for (PhotoEntity photoEntity : photoEntities) {
@@ -62,6 +60,12 @@ public class PhotoServiceImpl implements PhotoService {
             ));
         }
         return photoDTOS;
+    }
+
+    @Override
+    public List<PhotoDTO> findAllNotAccepted() {
+        List<PhotoEntity> photoEntities = photoRepository.findAllByAccepted(false);
+        return convertPhotoEntitiesToPhotoDTOs(photoEntities);
     }
 
     @Override
@@ -79,26 +83,7 @@ public class PhotoServiceImpl implements PhotoService {
     @Override
     public List<PhotoDTO> findAllByPlaceId(long placeId) {
         List<PhotoEntity> photoEntities = photoRepository.findAllByPlaceIdAndAccepted(placeId, true);
-        List<PhotoDTO> photoDTOS = new ArrayList<>();
-        UserEntity userEntity;
-        String username;
-        for (PhotoEntity photoEntity : photoEntities) {
-            userEntity = userRepository.findById(photoEntity.getUserId());
-            if (userEntity == null) {
-                username = "-";
-            } else {
-                username = userEntity.getUsername();
-            }
-            photoDTOS.add(new PhotoDTO(
-                    photoEntity.getId(),
-                    photoEntity.getDate(),
-                    photoEntity.isAccepted(),
-                    photoEntity.getUserId(),
-                    photoEntity.getPlaceId(),
-                    username
-            ));
-        }
-        return photoDTOS;
+        return convertPhotoEntitiesToPhotoDTOs(photoEntities);
     }
 
     @Override

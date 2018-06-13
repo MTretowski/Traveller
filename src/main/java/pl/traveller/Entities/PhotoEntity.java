@@ -3,7 +3,6 @@ package pl.traveller.Entities;
 import javax.persistence.*;
 import java.sql.Timestamp;
 
-
 @Entity
 @Table(name = "photo", schema = "tim")
 public class PhotoEntity {

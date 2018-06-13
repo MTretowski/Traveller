@@ -6,7 +6,6 @@ import pl.traveller.DTOs.MessageDTO;
 import pl.traveller.Entities.CommentEntity;
 
 import javax.security.sasl.AuthenticationException;
-import java.util.List;
 
 public interface CommentService {
 

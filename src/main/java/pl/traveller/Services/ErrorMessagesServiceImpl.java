@@ -17,9 +17,7 @@ public class ErrorMessagesServiceImpl implements ErrorMessagesService {
     }
 
     private HashMap<String, String> getMessages(String filePath) {
-
         HashMap<String, String> messages = new HashMap<>();
-
         InputStream inputStream = this.getClass().getResourceAsStream(filePath);
         BufferedReader bufferedReader = null;
         String readedLine;
@@ -45,7 +43,6 @@ public class ErrorMessagesServiceImpl implements ErrorMessagesService {
 
     public String getErrorMessage(String language, String key) {
         String message;
-
         if (language.equals("pl")) {
             message = messagesPl.get(key);
             if (message == null) {
