@@ -69,8 +69,8 @@ public class VisitController {
         }
     }
 
-    @PutMapping(value = "/visit/selectPlaceAsVisited/{language}")
-    public ResponseEntity selectPlaceAsVisited(@RequestBody VisitDateDTO visitDateDTO, @PathVariable String language, @RequestHeader HttpHeaders httpHeaders) {
+    @PutMapping(value = "/visit/setAsVisited/{language}")
+    public ResponseEntity setVisitAsVisited(@RequestBody VisitDateDTO visitDateDTO, @PathVariable String language, @RequestHeader HttpHeaders httpHeaders) {
         try {
             MessageDTO messageDTO = visitService.selectPlaceAsVisited(visitDateDTO, language, httpHeaders);
             if (messageDTO == null) {
